@@ -9,6 +9,7 @@ import de.uniks.pmws2223.uno.service.GameService;
 import javafx.scene.Parent;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
@@ -61,7 +62,7 @@ public class PlayerController implements Controller{
         cardListener = event -> {
             if(event.getNewValue() != null){
                 Card newCard = (Card) event.getNewValue();
-                StackPane newUICard = gameService.generateUICard(newCard);
+                Pane newUICard = gameService.generateUICard(newCard);
                 Player owner = newCard.getOwner();
 
                 cardBox.getChildren().add(newUICard);

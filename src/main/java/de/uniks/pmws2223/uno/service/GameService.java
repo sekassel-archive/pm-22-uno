@@ -91,11 +91,11 @@ public class GameService {
         game.withoutDrawCards(card);
     }
 
-    public StackPane generateUICard(Card card) {
-        StackPane UIcard = new StackPane();
+    public Pane generateUICard(Card card) {
+        Pane UIcard = new Pane();
         UIcard.setUserData(card);
         Rectangle rec = new Rectangle();
-        rec.setWidth(58);
+        rec.setWidth(56);
         rec.setHeight(90);
 
         //Color color = Color.web(card.getColor(), 1);
@@ -116,6 +116,8 @@ public class GameService {
         imageView.setFitHeight(96);
 
         UIcard.getChildren().add(rec);
+        UIcard.getChildren().get(0).setLayoutX(4);
+        UIcard.getChildren().get(0).setLayoutY(5);
         //UIcard.getChildren().add(val);
         UIcard.getChildren().add(imageView);
 
@@ -128,7 +130,7 @@ public class GameService {
     }
 
     private void playCard(MouseEvent mouseEvent) {
-        Card card = (Card) ((StackPane)mouseEvent.getSource()).getUserData();
+        Card card = (Card) ((Pane)mouseEvent.getSource()).getUserData();
         player.withoutCards(card);
         game.withDiscardCards(card);
     }
