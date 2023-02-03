@@ -25,9 +25,7 @@ public class SetupController implements Controller{
     }
 
     @Override
-    public void init() {
-        // TODO Auto-generated method stub
-        
+    public void init() {  
     }
 
     @Override
@@ -37,16 +35,16 @@ public class SetupController implements Controller{
         final TextField nameField = (TextField) parent.lookup("#nameField");
 
         playButton.setOnAction(event -> {
-            app.show(new IngameController());
+            app.show(new IngameController(app));
         });
+
+        System.out.println(CARD_COLOR.YELLOW.getColor());
 
         return parent;
     }
 
     @Override
-    public void destroy() {
-        // TODO Auto-generated method stub
-        
+    public void destroy() { 
     }
     
 }

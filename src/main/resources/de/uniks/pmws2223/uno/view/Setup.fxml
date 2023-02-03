@@ -41,7 +41,7 @@
             <Font name="Comic Sans MS Bold" size="29.0" />
          </font>
       </Label>
-      <Slider id="botSlider" fx:id="botSlider" blockIncrement="1.0" layoutX="513.0" layoutY="334.0" majorTickUnit="1.0" max="3.0" min="1.0" minorTickCount="1" prefHeight="28.0" prefWidth="163.0" scaleX="1.5" scaleY="1.5" showTickLabels="true" showTickMarks="true" snapToTicks="true" value="1.0" />
+      <Slider id="botSlider" fx:id="botSlider" blockIncrement="1.0" layoutX="513.0" layoutY="334.0" majorTickUnit="1.0" max="3.0" min="1.0" minorTickCount="0" prefHeight="28.0" prefWidth="163.0" scaleX="1.5" scaleY="1.5" showTickLabels="true" showTickMarks="true" snapToTicks="true" value="1.0" />
       <ImageView fitHeight="180.0" fitWidth="319.0" layoutX="-66.0" layoutY="396.0">
          <image>
             <Image url="@../image/pepehands.png" />
