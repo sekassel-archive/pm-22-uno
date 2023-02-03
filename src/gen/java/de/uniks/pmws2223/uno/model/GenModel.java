@@ -37,9 +37,9 @@ public class GenModel implements ClassModelDecorator {
 
     class Card {
         int number;
-
+        
         String color;
-
+        
         String type;
 
         @Link("cards")

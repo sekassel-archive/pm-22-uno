@@ -1,9 +1,12 @@
 package de.uniks.pmws2223.uno.controller;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import de.uniks.pmws2223.uno.App;
 import de.uniks.pmws2223.uno.Main;
+import de.uniks.pmws2223.uno.model.Card;
 import de.uniks.pmws2223.uno.service.BotService;
 import de.uniks.pmws2223.uno.service.GameService;
 import javafx.fxml.FXMLLoader;
@@ -16,6 +19,7 @@ public class IngameController implements Controller{
     private final App app;
     private final BotService botService = new BotService();
     private final GameService gameService = new GameService();
+    private List<Card> deck;
 
     public IngameController(App app){
         this.app = app;
@@ -28,8 +32,8 @@ public class IngameController implements Controller{
 
     @Override
     public void init() {
-        // TODO Auto-generated method stub
-        
+        deck = gameService.generateDeck();
+        System.out.print(deck.toString());
     }
 
     @Override

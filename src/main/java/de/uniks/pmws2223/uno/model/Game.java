@@ -11,11 +11,11 @@ public class Game
    public static final String PROPERTY_HUMAN = "human";
    public static final String PROPERTY_DISCARD_CARDS = "discardCards";
    public static final String PROPERTY_DRAW_CARDS = "drawCards";
+   protected PropertyChangeSupport listeners;
    private List<Player> bots;
    private Player human;
    private List<Card> discardCards;
    private List<Card> drawCards;
-   protected PropertyChangeSupport listeners;
 
    public List<Player> getBots()
    {

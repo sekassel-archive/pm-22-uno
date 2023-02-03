@@ -38,8 +38,6 @@ public class SetupController implements Controller{
             app.show(new IngameController(app));
         });
 
-        System.out.println(CARD_COLOR.YELLOW.getColor());
-
         return parent;
     }
 
