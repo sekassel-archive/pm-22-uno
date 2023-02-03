@@ -46,7 +46,8 @@ public class IngameController implements Controller{
 
     @Override
     public void init() {
-        deck = gameService.generateDeck();
+        //deck = gameService.generateDeck();
+        //deck = new ArrayList<Card>(game.getDrawCards());
     }
 
     @Override
@@ -67,7 +68,9 @@ public class IngameController implements Controller{
             }
         }
 
-        gameService.dealStartingCards(game, (ArrayList<Card>) deck);
+        StackPane drawPile = (StackPane) parent.lookup("#stackDrawPile");
+        StackPane discardPile = (StackPane) parent.lookup("#stackDiscardPile");
+        gameService.dealStartingCards(game, drawPile, discardPile);
 
         return parent;
     }

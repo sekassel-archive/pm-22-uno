@@ -1,59 +1,87 @@
 package de.uniks.pmws2223.uno.service;
 
-import static de.uniks.pmws2223.uno.Constants.*;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Random;
-
+import de.uniks.pmws2223.uno.Main;
 import de.uniks.pmws2223.uno.model.Card;
 import de.uniks.pmws2223.uno.model.Game;
 import de.uniks.pmws2223.uno.model.Player;
+import javafx.animation.Interpolator;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+
+import static de.uniks.pmws2223.uno.Constants.CARD_TYPE;
+import static de.uniks.pmws2223.uno.Constants.UNO_DECK;
+
 public class GameService {
 
-    public List<Card> generateDeck(){
+    private final AnimationService animationService = new AnimationService();
+
+    public List<Card> generateDeck() {
         ArrayList<Card> deck = new ArrayList<Card>(UNO_DECK);
         Collections.shuffle(deck);
         return deck;
     }
 
-    public Game generateGame(int botCount, String playerName){
+    public Game generateGame(int botCount, String playerName) {
         Game game = new Game();
+        List<Card> deck = generateDeck();
+        game.withDrawCards(deck);
 
         //Generate Bots
-        for(int _i = 0; _i < botCount; _i++){
-            game.withPlayers(new Player().setName("Bot0"+_i).setIsBot(true));
+        for (int _i = 0; _i < botCount; _i++) {
+            game.withPlayers(new Player().setName("Bot0" + _i).setIsBot(true));
         }
 
         //Generate Player
         game.withPlayers(new Player().setName(playerName).setIsBot(false));
 
         //Set Order
-        for(int _i = 0; _i < game.getPlayers().size(); _i++){
+        for (int _i = 0; _i < game.getPlayers().size(); _i++) {
             Player player = game.getPlayers().get(_i);
-            player.setNextPlayer(game.getPlayers().get((_i+1) % (game.getPlayers().size()-1)));
+            player.setNextPlayer(game.getPlayers().get((_i + 1) % (game.getPlayers().size() - 1)));
         }
 
         return game;
     }
 
-    public void dealStartingCards(Game game, ArrayList<Card> deck){
-        for(int _i = 0; _i < 7; _i++){
-            for(Player player : game.getPlayers()){
-                player.withCards(deck.remove(0));
+    public void dealStartingCards(Game game, StackPane drawPile, StackPane discardPile) {
+        for (int _i = 0; _i < 7; _i++) {
+            for (Player player : game.getPlayers()) {
+                Card card = game.getDrawCards().get(0);
+                player.withCards(card);
+                game.withoutDrawCards(card);
+                //player.withCards(deck.remove(0));
             }
+        }
+        //reveal first card
+        Card card = game.getDrawCards().get(0);
+        game.withDiscardCards(card);
+        game.withoutDrawCards(card);
+        discardPile.getChildren().add(generateUICard(card));
+
+        //create initial draw stack
+        for (int count = 0; count < game.getDrawCards().size(); count++) {
+            ImageView imageView = new ImageView(new Image(Objects.requireNonNull(Main.class.getResourceAsStream("image/Cards/back.png"))));
+            imageView.setFitWidth(64);
+            imageView.setFitHeight(96);
+            drawPile.getChildren().add(imageView);
+            //drawPile.getChildren().get(0).setLayoutX(count * 5);
+            //drawPile.getChildren().get(0).setLayoutY(count * 5);
         }
     }
 
-    public StackPane generateUICard(Card card){
+    public StackPane generateUICard(Card card) {
         StackPane UIcard = new StackPane();
         Rectangle rec = new Rectangle();
         rec.setWidth(64);
@@ -67,10 +95,55 @@ public class GameService {
         }
 
         Label val = new Label();
-        val.setText(""+card.getNumber());
-        
+        val.setText("" + card.getNumber());
+
+        ImageView imageView = new ImageView();
+        Image img = cardToImage(card);
+
+        imageView.setImage(img);
+        imageView.setFitWidth(64);
+        imageView.setFitHeight(96);
+
         UIcard.getChildren().add(rec);
-        UIcard.getChildren().add(val);
+        //UIcard.getChildren().add(val);
+        UIcard.getChildren().add(imageView);
+
+        UIcard.setOnMouseEntered(this::onMouseEnterCard);
+        UIcard.setOnMouseExited(this::onMouseExitCard);
         return UIcard;
+    }
+
+    private void onMouseExitCard(MouseEvent mouseEvent) {
+        Pane pane = (Pane) mouseEvent.getSource();
+        animationService.moveNode(pane.getChildren().get(0), 0, 0, 100, Interpolator.EASE_BOTH);
+        animationService.moveNode(pane.getChildren().get(1), 0, 0, 100, Interpolator.EASE_BOTH);
+        //pane.setViewOrder((int) pane.getUserData());
+    }
+
+    private void onMouseEnterCard(MouseEvent mouseEvent) {
+        Pane pane = (Pane) mouseEvent.getSource();
+        animationService.moveNode(pane.getChildren().get(0), 0, -20, 100, Interpolator.EASE_BOTH);
+        animationService.moveNode(pane.getChildren().get(1), 0, -20, 100, Interpolator.EASE_BOTH);
+        //pane.setViewOrder(-10);
+    }
+
+    private Image cardToImage(Card card) {
+        Image img = null;
+        if (card.getNumber() != -1) {
+            //img = new Image(Objects.requireNonNull(Main.class.getResourceAsStream("image/Cards/" + card.getNumber() + ".png")));
+            img = new Image(Objects.requireNonNull(Main.class.getResourceAsStream("image/Cards/" + card.getNumber() + ".png")));
+        } else if (card.getType().equals(CARD_TYPE.DRAW_TWO.toString())) {
+            img = new Image(Objects.requireNonNull(Main.class.getResourceAsStream("image/Cards/+2.png")));
+        } else if (card.getType().equals(CARD_TYPE.SKIP.toString())) {
+            img = new Image(Objects.requireNonNull(Main.class.getResourceAsStream("image/Cards/skip.png")));
+        } else if (card.getType().equals(CARD_TYPE.REVERSE.toString())) {
+            img = new Image(Objects.requireNonNull(Main.class.getResourceAsStream("image/Cards/reverse.png")));
+        } else if (card.getType().equals(CARD_TYPE.WILD.toString())) {
+            img = new Image(Objects.requireNonNull(Main.class.getResourceAsStream("image/Cards/wild.png")));
+        } else if (card.getType().equals(CARD_TYPE.WILD_DRAW_FOUR.toString())) {
+            img = new Image(Objects.requireNonNull(Main.class.getResourceAsStream("image/Cards/wilddrawfour.png")));
+        }
+
+        return img;
     }
 }
