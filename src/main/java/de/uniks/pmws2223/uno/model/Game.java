@@ -7,95 +7,75 @@ import java.beans.PropertyChangeSupport;
 
 public class Game
 {
-   public static final String PROPERTY_BOTS = "bots";
-   public static final String PROPERTY_HUMAN = "human";
+   public static final String PROPERTY_PLAYERS = "players";
    public static final String PROPERTY_DISCARD_CARDS = "discardCards";
    public static final String PROPERTY_DRAW_CARDS = "drawCards";
    protected PropertyChangeSupport listeners;
-   private List<Player> bots;
-   private Player human;
+   private List<Player> players;
    private List<Card> discardCards;
    private List<Card> drawCards;
 
-   public List<Player> getBots()
+   public List<Player> getPlayers()
    {
-      return this.bots != null ? Collections.unmodifiableList(this.bots) : Collections.emptyList();
+      return this.players != null ? Collections.unmodifiableList(this.players) : Collections.emptyList();
    }
 
-   public Game withBots(Player value)
+   public Game withPlayers(Player value)
    {
-      if (this.bots == null)
+      if (this.players == null)
       {
-         this.bots = new ArrayList<>();
+         this.players = new ArrayList<>();
       }
-      if (!this.bots.contains(value))
+      if (!this.players.contains(value))
       {
-         this.bots.add(value);
-         this.firePropertyChange(PROPERTY_BOTS, null, value);
+         this.players.add(value);
+         this.firePropertyChange(PROPERTY_PLAYERS, null, value);
       }
       return this;
    }
 
-   public Game withBots(Player... value)
+   public Game withPlayers(Player... value)
    {
       for (final Player item : value)
       {
-         this.withBots(item);
+         this.withPlayers(item);
       }
       return this;
    }
 
-   public Game withBots(Collection<? extends Player> value)
+   public Game withPlayers(Collection<? extends Player> value)
    {
       for (final Player item : value)
       {
-         this.withBots(item);
+         this.withPlayers(item);
       }
       return this;
    }
 
-   public Game withoutBots(Player value)
+   public Game withoutPlayers(Player value)
    {
-      if (this.bots != null && this.bots.remove(value))
+      if (this.players != null && this.players.remove(value))
       {
-         this.firePropertyChange(PROPERTY_BOTS, value, null);
+         this.firePropertyChange(PROPERTY_PLAYERS, value, null);
       }
       return this;
    }
 
-   public Game withoutBots(Player... value)
+   public Game withoutPlayers(Player... value)
    {
       for (final Player item : value)
       {
-         this.withoutBots(item);
+         this.withoutPlayers(item);
       }
       return this;
    }
 
-   public Game withoutBots(Collection<? extends Player> value)
+   public Game withoutPlayers(Collection<? extends Player> value)
    {
       for (final Player item : value)
       {
-         this.withoutBots(item);
+         this.withoutPlayers(item);
       }
-      return this;
-   }
-
-   public Player getHuman()
-   {
-      return this.human;
-   }
-
-   public Game setHuman(Player value)
-   {
-      if (this.human == value)
-      {
-         return this;
-      }
-
-      final Player oldValue = this.human;
-      this.human = value;
-      this.firePropertyChange(PROPERTY_HUMAN, oldValue, value);
       return this;
    }
 
@@ -248,8 +228,7 @@ public class Game
 
    public void removeYou()
    {
-      this.withoutBots(new ArrayList<>(this.getBots()));
-      this.setHuman(null);
+      this.withoutPlayers(new ArrayList<>(this.getPlayers()));
       this.withoutDiscardCards(new ArrayList<>(this.getDiscardCards()));
       this.withoutDrawCards(new ArrayList<>(this.getDrawCards()));
    }

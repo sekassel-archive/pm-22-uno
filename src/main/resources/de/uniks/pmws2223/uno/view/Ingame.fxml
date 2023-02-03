@@ -1,34 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.StackPane?>
-<?import javafx.scene.text.Font?>
 
-
-<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="576.0" prefWidth="1024.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1">
+<Pane fx:id="rootNode" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="576.0" prefWidth="1024.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <Label alignment="CENTER" layoutX="145.0" layoutY="14.0" prefHeight="73.0" prefWidth="125.0" text="Bot 1" underline="true">
-         <font>
-            <Font name="Comic Sans MS" size="48.0" />
-         </font>
-      </Label>
-      <Label alignment="CENTER" layoutX="450.0" layoutY="14.0" prefHeight="73.0" prefWidth="125.0" text="Bot 2" underline="true">
-         <font>
-            <Font name="Comic Sans MS" size="48.0" />
-         </font>
-      </Label>
-      <Label alignment="CENTER" layoutX="755.0" layoutY="14.0" prefHeight="73.0" prefWidth="125.0" text="Bot 3" underline="true">
-         <font>
-            <Font name="Comic Sans MS" size="48.0" />
-         </font>
-      </Label>
-      <HBox id="cardsBot1" fx:id="cardsBot1" layoutX="61.0" layoutY="95.0" prefHeight="73.0" prefWidth="293.0" style="-fx-border-color: BLACK;" />
-      <HBox id="cardsBot2" fx:id="cardsBot2" layoutX="366.0" layoutY="95.0" prefHeight="73.0" prefWidth="293.0" style="-fx-border-color: BLACK;" />
-      <HBox id="cardsBot3" fx:id="cardsBot3" layoutX="671.0" layoutY="95.0" prefHeight="73.0" prefWidth="293.0" style="-fx-border-color: BLACK;" />
-      <HBox id="cardsPlayer" fx:id="cardsPlayer" layoutX="162.0" layoutY="419.0" prefHeight="159.0" prefWidth="682.0" style="-fx-border-color: BLACK;" />
       <StackPane id="stackDiscardPile" fx:id="stackDiscardPile" layoutX="266.0" layoutY="213.0" prefHeight="150.0" prefWidth="200.0" />
       <StackPane id="stackDrawPile" fx:id="stackDrawPile" layoutX="559.0" layoutY="213.0" prefHeight="150.0" prefWidth="200.0" />
+      <HBox id="botBox" fx:id="botBox" layoutX="14.0" layoutY="14.0" prefHeight="170.0" prefWidth="994.0" />
    </children>
 </Pane>

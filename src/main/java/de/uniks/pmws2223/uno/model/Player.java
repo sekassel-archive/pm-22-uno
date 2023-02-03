@@ -12,11 +12,13 @@ public class Player
    public static final String PROPERTY_CARDS = "cards";
    public static final String PROPERTY_PREVIOUS_PLAYER = "previousPlayer";
    public static final String PROPERTY_NEXT_PLAYER = "nextPlayer";
+   public static final String PROPERTY_IS_BOT = "isBot";
    private String name;
    private List<Card> cards;
    private Player previousPlayer;
    private Player nextPlayer;
    protected PropertyChangeSupport listeners;
+   private boolean isBot;
 
    public String getName()
    {
@@ -153,6 +155,24 @@ public class Player
          value.setPreviousPlayer(this);
       }
       this.firePropertyChange(PROPERTY_NEXT_PLAYER, oldValue, value);
+      return this;
+   }
+
+   public boolean isIsBot()
+   {
+      return this.isBot;
+   }
+
+   public Player setIsBot(boolean value)
+   {
+      if (value == this.isBot)
+      {
+         return this;
+      }
+
+      final boolean oldValue = this.isBot;
+      this.isBot = value;
+      this.firePropertyChange(PROPERTY_IS_BOT, oldValue, value);
       return this;
    }
 

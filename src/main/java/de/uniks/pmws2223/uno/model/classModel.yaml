@@ -16,19 +16,19 @@
   roles: 	card_owner 	card_Game_discardCards 	card_Game_drawCards
 
 - player: 	org.fulib.classmodel.Clazz
-  attributes: 	player_name
+  attributes: 	player_name 	player_isBot
   model: 	c
   modified: 	false
   name: 	Player
   propertyStyle: 	Bean
-  roles: 	player_cards 	player_previousPlayer 	player_nextPlayer 	player_Game_bots 	player_Game_human
+  roles: 	player_cards 	player_previousPlayer 	player_nextPlayer 	player_Game_players
 
 - game: 	org.fulib.classmodel.Clazz
   model: 	c
   modified: 	false
   name: 	Game
   propertyStyle: 	Bean
-  roles: 	game_bots 	game_human 	game_discardCards 	game_drawCards
+  roles: 	game_players 	game_discardCards 	game_drawCards
 
 - c1: 	org.fulib.classmodel.CollectionType
   implClass: 	class java.util.ArrayList
@@ -105,6 +105,15 @@
   type: 	String
   typeSignature: 	String
 
+- player_isBot: 	org.fulib.classmodel.Attribute
+  clazz: 	player
+  id: 	Player_isBot
+  modified: 	false
+  name: 	isBot
+  propertyStyle: 	Bean
+  type: 	boolean
+  typeSignature: 	boolean
+
 - player_cards: 	org.fulib.classmodel.AssocRole
   aggregation: 	false
   cardinality: 	42
@@ -137,49 +146,28 @@
   other: 	player_previousPlayer
   propertyStyle: 	Bean
 
-- player_Game_bots: 	org.fulib.classmodel.AssocRole
+- player_Game_players: 	org.fulib.classmodel.AssocRole
   aggregation: 	false
   cardinality: 	0
   clazz: 	player
   collectionType: 	c1
-  id: 	Player_Game_bots
+  id: 	Player_Game_players
   modified: 	false
-  other: 	game_bots
+  other: 	game_players
   propertyStyle: 	Bean
   roleType: 	"java.util.ArrayList<%s>"
 
-- player_Game_human: 	org.fulib.classmodel.AssocRole
-  aggregation: 	false
-  cardinality: 	0
-  clazz: 	player
-  collectionType: 	c1
-  id: 	Player_Game_human
-  modified: 	false
-  other: 	game_human
-  propertyStyle: 	Bean
-  roleType: 	"java.util.ArrayList<%s>"
-
-- game_bots: 	org.fulib.classmodel.AssocRole
+- game_players: 	org.fulib.classmodel.AssocRole
   aggregation: 	false
   cardinality: 	42
   clazz: 	game
   collectionType: 	c1
-  id: 	Game_bots
+  id: 	Game_players
   modified: 	false
-  name: 	bots
-  other: 	player_Game_bots
+  name: 	players
+  other: 	player_Game_players
   propertyStyle: 	Bean
   roleType: 	"java.util.ArrayList<%s>"
-
-- game_human: 	org.fulib.classmodel.AssocRole
-  aggregation: 	false
-  cardinality: 	1
-  clazz: 	game
-  id: 	Game_human
-  modified: 	false
-  name: 	human
-  other: 	player_Game_human
-  propertyStyle: 	Bean
 
 - game_discardCards: 	org.fulib.classmodel.AssocRole
   aggregation: 	false

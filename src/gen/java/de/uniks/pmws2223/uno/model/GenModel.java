@@ -10,10 +10,7 @@ public class GenModel implements ClassModelDecorator {
 
     class Game {
         @Link
-        List<Player> bots;
-
-        @Link
-        Player human;
+        List<Player> players;
 
         @Link
         List<Card> discardCards;
@@ -24,6 +21,8 @@ public class GenModel implements ClassModelDecorator {
 
     class Player {
         String name;
+
+        boolean isBot;
 
         @Link("nextPlayer")
         Player previousPlayer;

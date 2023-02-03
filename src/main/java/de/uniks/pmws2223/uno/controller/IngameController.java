@@ -16,6 +16,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
@@ -30,7 +31,7 @@ public class IngameController implements Controller{
     private final BotService botService = new BotService();
     private final GameService gameService;
     private List<Card> deck;
-    private PropertyChangeListener cardListener;
+    private final List<PlayerController> playerControllers = new ArrayList<>();
 
     public IngameController(App app, Game game, GameService gameService){
         this.app = app;
@@ -51,33 +52,19 @@ public class IngameController implements Controller{
     @Override
     public Parent render() throws IOException {
         final Parent parent = FXMLLoader.load(Main.class.getResource("view/Ingame.fxml"));
-        final HBox playerCards = (HBox) parent.lookup("#cardsPlayer");
-        final HBox bot1Cards = (HBox) parent.lookup("#cardsBot1");
-        final HBox bot2Cards = (HBox) parent.lookup("#cardsBot2");
-        final HBox bot3Cards = (HBox) parent.lookup("#cardsBot3");
-        final List<HBox> botCards = List.of(bot1Cards,bot2Cards,bot3Cards);
+        for(Player player : game.getPlayers()){
+            PlayerController playerController = new PlayerController(player, gameService);
+            playerController.init();
+            playerControllers.add(playerController);
 
-        cardListener = event -> {
-            if(event.getNewValue() != null){
-                Card newCard = (Card) event.getNewValue();
-                StackPane newUICard = generateUICard(newCard);
-                Player owner = newCard.getOwner();
-                if(owner == game.getHuman()){
-                    playerCards.getChildren().add(newUICard);
-                }
-                else{
-                    int botNr = game.getBots().indexOf(owner);
-                    botCards.get(botNr).getChildren().add(newUICard);
-                }
+            if(player.isIsBot()){
+                HBox root = (HBox) parent.lookup("#botBox");
+                root.getChildren().add(playerController.render());
             }
-            else if(event.getOldValue() != null){
-                //TODO: kill old value from respective hbox
+            else{
+                Pane root = (Pane) parent.lookup("#rootNode");
+                root.getChildren().add(playerController.render());
             }
-        };
-
-        game.getHuman().listeners().addPropertyChangeListener(Player.PROPERTY_CARDS ,cardListener);
-        for(Player bot: game.getBots()){
-            bot.listeners().addPropertyChangeListener(Player.PROPERTY_CARDS ,cardListener);
         }
 
         gameService.dealStartingCards(game, (ArrayList<Card>) deck);
@@ -88,27 +75,6 @@ public class IngameController implements Controller{
     @Override
     public void destroy() {
 
-    }
-
-    private StackPane generateUICard(Card card){
-        StackPane UIcard = new StackPane();
-        Rectangle rec = new Rectangle();
-        rec.setWidth(64);
-        rec.setHeight(96);
-
-        //Color color = Color.web(card.getColor(), 1);
-        if (card.getColor() != null) {
-            rec.setFill(Paint.valueOf(card.getColor()));
-        } else {
-            rec.setFill(Color.BLACK);
-        }
-
-        Label val = new Label();
-        val.setText(""+card.getNumber());
-        
-        UIcard.getChildren().add(rec);
-        UIcard.getChildren().add(val);
-        return UIcard;
     }
     
 }
