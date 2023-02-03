@@ -80,6 +80,8 @@ public class IngameController implements Controller{
             bot.listeners().addPropertyChangeListener(Player.PROPERTY_CARDS ,cardListener);
         }
 
+        gameService.dealStartingCards(game, (ArrayList<Card>) deck);
+
         return parent;
     }
 
@@ -95,7 +97,11 @@ public class IngameController implements Controller{
         rec.setHeight(96);
 
         //Color color = Color.web(card.getColor(), 1);
-        rec.setFill(Paint.valueOf(card.getColor()));
+        if (card.getColor() != null) {
+            rec.setFill(Paint.valueOf(card.getColor()));
+        } else {
+            rec.setFill(Color.BLACK);
+        }
 
         Label val = new Label();
         val.setText(""+card.getNumber());

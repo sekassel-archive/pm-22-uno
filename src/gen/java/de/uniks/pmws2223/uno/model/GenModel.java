@@ -6,8 +6,6 @@ import org.fulib.builder.ClassModelDecorator;
 import org.fulib.builder.ClassModelManager;
 import org.fulib.builder.reflect.Link;
 
-import javafx.scene.paint.Color;
-
 public class GenModel implements ClassModelDecorator {
 
     class Game {
@@ -40,7 +38,7 @@ public class GenModel implements ClassModelDecorator {
     class Card {
         int number;
         
-        Color color;
+        String color;
         
         String type;
 
