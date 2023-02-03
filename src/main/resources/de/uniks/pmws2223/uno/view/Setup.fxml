@@ -11,11 +11,6 @@
 
 <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="576.0" prefWidth="1024.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <Label alignment="CENTER" layoutX="392.0" layoutY="31.0" prefHeight="108.0" prefWidth="241.0" text="UNO" underline="true">
-         <font>
-            <Font name="Comic Sans MS" size="95.0" />
-         </font>
-      </Label>
       <Label alignment="CENTER" layoutX="377.0" layoutY="165.0" prefHeight="35.0" prefWidth="270.0" text="[for lonely people]" underline="true">
          <font>
             <Font name="Comic Sans MS Italic" size="29.0" />
@@ -50,6 +45,11 @@
       <ImageView fitHeight="287.0" fitWidth="236.0" layoutX="796.0" layoutY="304.0" scaleX="-1.0">
          <image>
             <Image url="@../image/foreverAlone.png" />
+         </image>
+      </ImageView>
+      <ImageView fitHeight="365.0" fitWidth="535.0" layoutX="245.0" layoutY="-99.0" mouseTransparent="true">
+         <image>
+            <Image url="@../image/Logo.gif" />
          </image>
       </ImageView>
    </children>
