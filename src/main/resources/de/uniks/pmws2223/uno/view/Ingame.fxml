@@ -6,8 +6,8 @@
 
 <Pane fx:id="rootNode" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="576.0" prefWidth="1024.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <StackPane id="stackDiscardPile" fx:id="stackDiscardPile" layoutX="266.0" layoutY="213.0" prefHeight="150.0" prefWidth="200.0" />
-      <StackPane id="stackDrawPile" fx:id="stackDrawPile" layoutX="559.0" layoutY="213.0" prefHeight="150.0" prefWidth="200.0" />
-      <HBox id="botBox" fx:id="botBox" layoutX="14.0" layoutY="14.0" prefHeight="170.0" prefWidth="994.0" />
+      <StackPane id="stackDiscardPile" fx:id="stackDiscardPile" layoutX="359.0" layoutY="226.0" prefHeight="89.0" prefWidth="59.0" scaleX="1.5" scaleY="1.5" style="-fx-background-color: #00000000;" />
+      <StackPane id="stackDrawPile" fx:id="stackDrawPile" layoutX="600.0" layoutY="226.0" prefHeight="89.0" prefWidth="60.0" scaleX="1.5" scaleY="1.5" style="-fx-background-color: #00000000;" />
+      <HBox id="botBox" fx:id="botBox" alignment="CENTER" layoutX="14.0" layoutY="14.0" prefHeight="134.0" prefWidth="994.0" style="-fx-background-color: #00000000;" />
    </children>
 </Pane>

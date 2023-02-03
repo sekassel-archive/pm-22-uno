@@ -71,11 +71,11 @@ public class GameService {
         Card card = game.getDrawCards().get(0);
         game.withDiscardCards(card);
         game.withoutDrawCards(card);
-        discardPile.getChildren().add(generateUICard(card));
+        discardPile.getChildren().add(generateUICard(card, false));
 
         //create initial draw stack
         for (int count = 0; count < game.getDrawCards().size(); count++) {
-            ImageView imageView = new ImageView(new Image(Objects.requireNonNull(Main.class.getResourceAsStream("image/Cards/back.png"))));
+            ImageView imageView = new ImageView(new Image(Objects.requireNonNull(Main.class.getResourceAsStream("image/cards/back.png"))));
             imageView.setFitWidth(64);
             imageView.setFitHeight(96);
             drawPile.getChildren().add(imageView);
@@ -91,7 +91,7 @@ public class GameService {
         game.withoutDrawCards(card);
     }
 
-    public Pane generateUICard(Card card) {
+    public Pane generateUICard(Card card, boolean hidden) {
         Pane UIcard = new Pane();
         UIcard.setUserData(card);
         Rectangle rec = new Rectangle();
@@ -109,7 +109,7 @@ public class GameService {
         val.setText("" + card.getNumber());
 
         ImageView imageView = new ImageView();
-        Image img = cardToImage(card);
+        Image img = !hidden ? cardToImage(card) : new Image(Objects.requireNonNull(Main.class.getResourceAsStream("image/cards/back.png")));
 
         imageView.setImage(img);
         imageView.setFitWidth(64);
@@ -153,17 +153,18 @@ public class GameService {
         Image img = null;
         if (card.getNumber() != -1) {
             //img = new Image(Objects.requireNonNull(Main.class.getResourceAsStream("image/Cards/" + card.getNumber() + ".png")));
-            img = new Image(Objects.requireNonNull(Main.class.getResourceAsStream("image/Cards/" + card.getNumber() + ".png")));
+            //TODO: Das lieber zu nem switch statement
+            img = new Image(Objects.requireNonNull(Main.class.getResourceAsStream("image/cards/" + card.getNumber() + ".png")));
         } else if (card.getType().equals(CARD_TYPE.DRAW_TWO.toString())) {
-            img = new Image(Objects.requireNonNull(Main.class.getResourceAsStream("image/Cards/+2.png")));
+            img = new Image(Objects.requireNonNull(Main.class.getResourceAsStream("image/cards/+2.png")));
         } else if (card.getType().equals(CARD_TYPE.SKIP.toString())) {
-            img = new Image(Objects.requireNonNull(Main.class.getResourceAsStream("image/Cards/skip.png")));
+            img = new Image(Objects.requireNonNull(Main.class.getResourceAsStream("image/cards/skip.png")));
         } else if (card.getType().equals(CARD_TYPE.REVERSE.toString())) {
-            img = new Image(Objects.requireNonNull(Main.class.getResourceAsStream("image/Cards/reverse.png")));
+            img = new Image(Objects.requireNonNull(Main.class.getResourceAsStream("image/cards/reverse.png")));
         } else if (card.getType().equals(CARD_TYPE.WILD.toString())) {
-            img = new Image(Objects.requireNonNull(Main.class.getResourceAsStream("image/Cards/wild.png")));
+            img = new Image(Objects.requireNonNull(Main.class.getResourceAsStream("image/cards/wild.png")));
         } else if (card.getType().equals(CARD_TYPE.WILD_DRAW_FOUR.toString())) {
-            img = new Image(Objects.requireNonNull(Main.class.getResourceAsStream("image/Cards/wilddrawfour.png")));
+            img = new Image(Objects.requireNonNull(Main.class.getResourceAsStream("image/cards/wilddrawfour.png")));
         }
 
         return img;
