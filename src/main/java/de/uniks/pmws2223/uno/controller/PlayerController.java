@@ -67,7 +67,7 @@ public class PlayerController implements Controller{
                 cardBox.getChildren().add(newUICard);
             }
             else if(event.getOldValue() != null){
-                //TODO: kill old value from respective hbox
+                cardBox.getChildren().removeIf(card -> card.getUserData().equals(event.getOldValue()));
             }
         };
 
@@ -78,8 +78,7 @@ public class PlayerController implements Controller{
 
     @Override
     public void destroy() {
-        // TODO Auto-generated method stub
-        
+        player.listeners().removePropertyChangeListener(Player.PROPERTY_CARDS, cardListener);
     }
     
 }

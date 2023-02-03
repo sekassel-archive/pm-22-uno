@@ -26,6 +26,8 @@ import static de.uniks.pmws2223.uno.Constants.UNO_DECK;
 public class GameService {
 
     private final AnimationService animationService = new AnimationService();
+    private Game game;
+    private Player player;
 
     public List<Card> generateDeck() {
         ArrayList<Card> deck = new ArrayList<Card>(UNO_DECK);
@@ -34,7 +36,7 @@ public class GameService {
     }
 
     public Game generateGame(int botCount, String playerName) {
-        Game game = new Game();
+        game = new Game();
         List<Card> deck = generateDeck();
         game.withDrawCards(deck);
 
@@ -44,7 +46,8 @@ public class GameService {
         }
 
         //Generate Player
-        game.withPlayers(new Player().setName(playerName).setIsBot(false));
+        player = new Player().setName(playerName).setIsBot(false);
+        game.withPlayers(player);
 
         //Set Order
         for (int _i = 0; _i < game.getPlayers().size(); _i++) {
@@ -76,13 +79,21 @@ public class GameService {
             imageView.setFitWidth(64);
             imageView.setFitHeight(96);
             drawPile.getChildren().add(imageView);
+            imageView.setOnMouseClicked(this::drawCard);
             //drawPile.getChildren().get(0).setLayoutX(count * 5);
             //drawPile.getChildren().get(0).setLayoutY(count * 5);
         }
     }
 
+    private void drawCard(MouseEvent mouseEvent) {
+        Card card = game.getDrawCards().get(0);
+        player.withCards(card);
+        game.withoutDrawCards(card);
+    }
+
     public StackPane generateUICard(Card card) {
         StackPane UIcard = new StackPane();
+        UIcard.setUserData(card);
         Rectangle rec = new Rectangle();
         rec.setWidth(64);
         rec.setHeight(96);
@@ -108,9 +119,18 @@ public class GameService {
         //UIcard.getChildren().add(val);
         UIcard.getChildren().add(imageView);
 
-        UIcard.setOnMouseEntered(this::onMouseEnterCard);
-        UIcard.setOnMouseExited(this::onMouseExitCard);
+        if (card.getOwner() != null && !card.getOwner().isIsBot()) {
+            UIcard.setOnMouseEntered(this::onMouseEnterCard);
+            UIcard.setOnMouseExited(this::onMouseExitCard);
+            UIcard.setOnMouseClicked(this::playCard);
+        }
         return UIcard;
+    }
+
+    private void playCard(MouseEvent mouseEvent) {
+        Card card = (Card) ((StackPane)mouseEvent.getSource()).getUserData();
+        player.withoutCards(card);
+        game.withDiscardCards(card);
     }
 
     private void onMouseExitCard(MouseEvent mouseEvent) {

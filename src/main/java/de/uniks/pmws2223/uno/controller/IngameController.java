@@ -32,6 +32,7 @@ public class IngameController implements Controller{
     private final GameService gameService;
     private List<Card> deck;
     private final List<PlayerController> playerControllers = new ArrayList<>();
+    private PropertyChangeListener discardListener;
 
     public IngameController(App app, Game game, GameService gameService){
         this.app = app;
@@ -72,12 +73,20 @@ public class IngameController implements Controller{
         StackPane discardPile = (StackPane) parent.lookup("#stackDiscardPile");
         gameService.dealStartingCards(game, drawPile, discardPile);
 
+        discardListener = evt -> {
+            if (evt.getNewValue() != null) {
+                discardPile.getChildren().add(gameService.generateUICard((Card) evt.getNewValue()));
+            }
+        };
+
+        game.listeners().addPropertyChangeListener(Game.PROPERTY_DISCARD_CARDS, discardListener);
+
         return parent;
     }
 
     @Override
     public void destroy() {
-
+        game.listeners().removePropertyChangeListener(Game.PROPERTY_DISCARD_CARDS, discardListener);
     }
     
 }
