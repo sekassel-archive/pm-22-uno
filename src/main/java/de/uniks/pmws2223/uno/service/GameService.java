@@ -95,8 +95,8 @@ public class GameService {
         StackPane UIcard = new StackPane();
         UIcard.setUserData(card);
         Rectangle rec = new Rectangle();
-        rec.setWidth(64);
-        rec.setHeight(96);
+        rec.setWidth(58);
+        rec.setHeight(90);
 
         //Color color = Color.web(card.getColor(), 1);
         if (card.getColor() != null) {
