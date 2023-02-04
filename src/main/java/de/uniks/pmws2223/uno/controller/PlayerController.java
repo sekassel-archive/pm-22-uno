@@ -2,11 +2,15 @@ package de.uniks.pmws2223.uno.controller;
 
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import de.uniks.pmws2223.uno.Constants.CARD_TYPE;
 import de.uniks.pmws2223.uno.model.Card;
 import de.uniks.pmws2223.uno.model.Player;
+import de.uniks.pmws2223.uno.service.BotService;
 import de.uniks.pmws2223.uno.service.GameService;
+import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.control.Label;
@@ -25,13 +29,15 @@ public class PlayerController implements Controller{
     private PropertyChangeListener cardListener;
     private PropertyChangeListener currentPlayerListener;
     private GameService gameService;
+    private BotService botService;
     private Pane wishColorParent;
     private Label nameLabel;
 
-    public PlayerController(Player player, GameService gameService, Pane wishColorParent){
+    public PlayerController(Player player, GameService gameService, Pane wishColorParent, BotService botService){
         this.player = player;
         this.gameService = gameService;
         this.wishColorParent = wishColorParent;
+        this.botService = botService;
     }
 
     @Override
@@ -108,6 +114,19 @@ public class PlayerController implements Controller{
                 }
                 else{
                     nameLabel.setTextFill(Color.RED);
+                    Timer timer = new Timer();
+                    TimerTask task = new TimerTask() {
+
+                        @Override
+                        public void run() {
+                            Platform.runLater(() -> {
+                                Card cardToPlay = botService.checkCardsForPlayable(player);
+                                if(cardToPlay != null) gameService.playCard(cardToPlay);
+                            });
+                        }
+                        
+                    };
+                    timer.schedule(task, 2000);
                 }
             }
         };

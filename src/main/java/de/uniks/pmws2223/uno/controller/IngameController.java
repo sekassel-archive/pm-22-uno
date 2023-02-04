@@ -30,7 +30,7 @@ public class IngameController implements Controller{
 
     private final App app;
     private final Game game;
-    private final BotService botService = new BotService();
+    private final BotService botService;
     private final GameService gameService;
     private List<Card> deck;
     private final List<PlayerController> playerControllers = new ArrayList<>();
@@ -41,6 +41,7 @@ public class IngameController implements Controller{
         this.app = app;
         this.game = game;
         this.gameService = gameService;
+        this.botService = new BotService(gameService);
     }
 
     @Override
@@ -63,7 +64,7 @@ public class IngameController implements Controller{
         }
 
         for(Player player : game.getPlayers()){
-            PlayerController playerController = new PlayerController(player, gameService, player.isIsBot() ? null : wishColorParent);
+            PlayerController playerController = new PlayerController(player, gameService, player.isIsBot() ? null : wishColorParent, botService);
             playerController.init();
             playerControllers.add(playerController);
 

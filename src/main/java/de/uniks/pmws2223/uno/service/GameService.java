@@ -61,9 +61,9 @@ public class GameService {
 
     public void dealStartingCards(Game game, StackPane drawPile, StackPane discardPile) {
         for (int _i = 0; _i < 7; _i++) {
-            for (Player player : game.getPlayers()) {
+            for (Player _player : game.getPlayers()) {
                 Card card = game.getDrawCards().get(0);
-                player.withCards(card);
+                _player.withCards(card);
                 game.withoutDrawCards(card);
                 //player.withCards(deck.remove(0));
             }
@@ -89,13 +89,13 @@ public class GameService {
 
     private void drawCard(MouseEvent mouseEvent) {
         Card card = game.getDrawCards().get(0);
-        player.withCards(card);
+        game.getCurrentPlayer().withCards(card);
         game.withoutDrawCards(card);
         if(!cardIsPlayable(card, game.getDiscardCards().get(game.getDiscardCards().size()-1))){
             passTurn();
         }
         else{
-            playCard(null);
+            playClickedCard(null);
         }
     }
 
@@ -117,6 +117,7 @@ public class GameService {
         val.setText("" + card.getNumber());
 
         ImageView imageView = new ImageView();
+        hidden = false;
         Image img = !hidden ? cardToImage(card) : new Image(Objects.requireNonNull(Main.class.getResourceAsStream("image/cards/back.png")));
 
         imageView.setImage(img);
@@ -132,12 +133,12 @@ public class GameService {
         if (card.getOwner() != null && !card.getOwner().isIsBot()) {
             UIcard.setOnMouseEntered(this::onMouseEnterCard);
             UIcard.setOnMouseExited(this::onMouseExitCard);
-            UIcard.setOnMouseClicked(this::playCard);
+            UIcard.setOnMouseClicked(this::playClickedCard);
         }
         return UIcard;
     }
 
-    private void playCard(MouseEvent mouseEvent) {
+    public void playClickedCard(MouseEvent mouseEvent) {
         Card card;
         if(mouseEvent != null){
             card = (Card) ((Pane)mouseEvent.getSource()).getUserData();
@@ -145,15 +146,19 @@ public class GameService {
         else{
             card = game.getCurrentPlayer().getCards().get(game.getCurrentPlayer().getCards().size()-1);
         }
+        playCard(card);
+    }
+
+    public void playCard(Card card){
         Card discardPileTopCard = game.getDiscardCards().get(game.getDiscardCards().size()-1);
 
         if(cardIsPlayable(card, discardPileTopCard)){
-            player.withoutCards(card);
+            game.getCurrentPlayer().withoutCards(card);
             game.withDiscardCards(card);
         }
     }
 
-    private boolean cardIsPlayable(Card cardToPlay, Card discardTopCard){
+    public boolean cardIsPlayable(Card cardToPlay, Card discardTopCard){
         String discardPileTopCardType = discardTopCard.getType();
         boolean wildCardFirstCard = game.getDiscardCards().size() == 1 && (discardPileTopCardType.equals(CARD_TYPE.WILD.toString()) || discardPileTopCardType.equals(CARD_TYPE.WILD_DRAW_FOUR.toString()));
         String cardType = cardToPlay.getType();
