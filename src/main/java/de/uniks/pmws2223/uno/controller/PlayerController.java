@@ -120,8 +120,24 @@ public class PlayerController implements Controller{
                         @Override
                         public void run() {
                             Platform.runLater(() -> {
-                                Card cardToPlay = botService.checkCardsForPlayable(player);
-                                if(cardToPlay != null) gameService.playCard(cardToPlay);
+                                player.setWishedColor(botService.wishBotColor(player));
+                                if (player.getDebtCount() <= 0) {
+                                    Card cardToPlay = botService.checkCardsForPlayable(player, null);
+                                    if (cardToPlay != null) gameService.playCard(cardToPlay);
+                                    else gameService.drawCard(true);
+                                } else {
+                                    Card cardToPlay =  botService.checkCardsForPlayable(player, player.getDebtCount() == 2 ? CARD_TYPE.DRAW_TWO.toString() : CARD_TYPE.WILD_DRAW_FOUR.toString());
+                                    if (cardToPlay != null) {
+                                        gameService.playCard(cardToPlay);
+                                    }
+                                    else {
+                                        for (int i = 0; i < player.getDebtCount(); i++) {
+                                            gameService.drawCard(false);
+                                        }
+                                        gameService.passTurn();
+                                    }
+                                    player.setDebtCount(0);
+                                }
                             });
                         }
                         

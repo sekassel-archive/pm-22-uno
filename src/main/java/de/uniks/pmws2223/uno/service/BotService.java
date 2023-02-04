@@ -1,7 +1,11 @@
 package de.uniks.pmws2223.uno.service;
 
+import de.uniks.pmws2223.uno.Constants;
 import de.uniks.pmws2223.uno.model.Card;
 import de.uniks.pmws2223.uno.model.Player;
+
+import java.util.Collections;
+import java.util.List;
 
 public class BotService {
     final GameService gameService;
@@ -10,12 +14,32 @@ public class BotService {
         this.gameService = gameService;
     }
 
-    public Card checkCardsForPlayable(Player bot){
+    public Card checkCardsForPlayable(Player bot, String type){
         for(Card card : bot.getCards()){
-            if(gameService.cardIsPlayable(card, bot.getCurrentGame().getDiscardCards().get(bot.getCurrentGame().getDiscardCards().size()-1))){
+            if((type == null || card.getType().equals(type))  && gameService.cardIsPlayable(card, bot.getCurrentGame().getDiscardCards().get(bot.getCurrentGame().getDiscardCards().size()-1))){
                 return card;
             }
         }
         return null;
+    }
+
+    public String wishBotColor(Player bot) {
+        int yellowCount = 0;
+        int redCount = 0;
+        int blueCount = 0;
+        int greenCount = 0;
+        for (Card card : bot.getCards()) {
+            if (card.getColor() != null) {
+                if (card.getColor().equals(Constants.CARD_COLOR.YELLOW.toString())) yellowCount++;
+                if (card.getColor().equals(Constants.CARD_COLOR.RED.toString())) redCount++;
+                if (card.getColor().equals(Constants.CARD_COLOR.BLUE.toString())) blueCount++;
+                if (card.getColor().equals(Constants.CARD_COLOR.GREEN.toString())) greenCount++;
+            }
+        }
+        int max = Collections.max(List.of(yellowCount, redCount, blueCount, greenCount));
+        if (yellowCount ==  max) return Constants.CARD_COLOR.YELLOW.toString();
+        else if (redCount ==  max) return Constants.CARD_COLOR.RED.toString();
+        else if (blueCount ==  max) return Constants.CARD_COLOR.BLUE.toString();
+        else return Constants.CARD_COLOR.GREEN.toString();
     }
 }

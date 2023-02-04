@@ -15,6 +15,7 @@ public class Player
    public static final String PROPERTY_IS_BOT = "isBot";
    public static final String PROPERTY_CURRENT_GAME = "currentGame";
    public static final String PROPERTY_WISHED_COLOR = "wishedColor";
+   public static final String PROPERTY_DEBT_COUNT = "debtCount";
    private String name;
    private List<Card> cards;
    private Player previousPlayer;
@@ -23,6 +24,7 @@ public class Player
    private boolean isBot;
    private Game currentGame;
    private String wishedColor;
+   private int debtCount;
 
    public String getName()
    {
@@ -222,6 +224,24 @@ public class Player
       final String oldValue = this.wishedColor;
       this.wishedColor = value;
       this.firePropertyChange(PROPERTY_WISHED_COLOR, oldValue, value);
+      return this;
+   }
+
+   public int getDebtCount()
+   {
+      return this.debtCount;
+   }
+
+   public Player setDebtCount(int value)
+   {
+      if (value == this.debtCount)
+      {
+         return this;
+      }
+
+      final int oldValue = this.debtCount;
+      this.debtCount = value;
+      this.firePropertyChange(PROPERTY_DEBT_COUNT, oldValue, value);
       return this;
    }
 

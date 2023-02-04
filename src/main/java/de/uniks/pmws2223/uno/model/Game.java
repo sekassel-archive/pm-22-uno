@@ -8,11 +8,13 @@ import java.beans.PropertyChangeSupport;
 public class Game
 {
    public static final String PROPERTY_CURRENT_PLAYER = "currentPlayer";
+   public static final String PROPERTY_CLOCKWISE = "clockwise";
    public static final String PROPERTY_PLAYERS = "players";
    public static final String PROPERTY_DISCARD_CARDS = "discardCards";
    public static final String PROPERTY_DRAW_CARDS = "drawCards";
    protected PropertyChangeSupport listeners;
    private Player currentPlayer;
+   private boolean clockwise;
    private List<Player> players;
    private List<Card> discardCards;
    private List<Card> drawCards;
@@ -41,6 +43,24 @@ public class Game
          value.setCurrentGame(this);
       }
       this.firePropertyChange(PROPERTY_CURRENT_PLAYER, oldValue, value);
+      return this;
+   }
+
+   public boolean isClockwise()
+   {
+      return this.clockwise;
+   }
+
+   public Game setClockwise(boolean value)
+   {
+      if (value == this.clockwise)
+      {
+         return this;
+      }
+
+      final boolean oldValue = this.clockwise;
+      this.clockwise = value;
+      this.firePropertyChange(PROPERTY_CLOCKWISE, oldValue, value);
       return this;
    }
 

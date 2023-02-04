@@ -85,7 +85,29 @@ public class IngameController implements Controller{
         discardListener = evt -> {
             if (evt.getNewValue() != null) {
                 discardPile.getChildren().add(gameService.generateUICard((Card) evt.getNewValue(), false));
-                gameService.passTurn();
+                String type = game.getDiscardCards().get(game.getDiscardCards().size() - 1).getType();
+                if (CARD_TYPE.SKIP.toString().equals(type)) {
+                    game.setCurrentPlayer(game.getCurrentPlayer().getNextPlayer().getNextPlayer());
+                } else if (CARD_TYPE.REVERSE.toString().equals(type)) {
+                    game.setClockwise(!game.isClockwise());
+                    gameService.passTurn();
+                } else if (CARD_TYPE.WILD_DRAW_FOUR.toString().equals(type)) {
+                    if (game.isClockwise()) {
+                        game.getCurrentPlayer().getNextPlayer().setDebtCount(4);
+                    } else {
+                        game.getCurrentPlayer().getPreviousPlayer().setDebtCount(4);
+                    }
+                    gameService.passTurn();
+                } else if (CARD_TYPE.DRAW_TWO.toString().equals(type)) {
+                    if (game.isClockwise()) {
+                        game.getCurrentPlayer().getNextPlayer().setDebtCount(2);
+                    } else {
+                        game.getCurrentPlayer().getPreviousPlayer().setDebtCount(2);
+                    }
+                    gameService.passTurn();
+                } else {
+                    gameService.passTurn();
+                }
             }
         };
 

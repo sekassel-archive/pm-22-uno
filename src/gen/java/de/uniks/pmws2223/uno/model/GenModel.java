@@ -9,6 +9,8 @@ import org.fulib.builder.reflect.Link;
 public class GenModel implements ClassModelDecorator {
 
     class Game {
+        boolean clockwise;
+
         @Link
         List<Player> players;
 
@@ -24,6 +26,8 @@ public class GenModel implements ClassModelDecorator {
 
     class Player {
         String name;
+
+        int debtCount;
 
         boolean isBot;
 

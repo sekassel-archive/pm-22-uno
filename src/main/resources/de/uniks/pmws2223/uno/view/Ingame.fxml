@@ -12,11 +12,6 @@
       <StackPane id="stackDiscardPile" fx:id="stackDiscardPile" layoutX="359.0" layoutY="226.0" prefHeight="89.0" prefWidth="59.0" scaleX="1.5" scaleY="1.5" style="-fx-background-color: #00000000;" />
       <StackPane id="stackDrawPile" fx:id="stackDrawPile" layoutX="600.0" layoutY="226.0" prefHeight="89.0" prefWidth="60.0" scaleX="1.5" scaleY="1.5" style="-fx-background-color: #00000000;" />
       <HBox id="botBox" fx:id="botBox" alignment="CENTER" layoutX="14.0" layoutY="14.0" prefHeight="134.0" prefWidth="994.0" style="-fx-background-color: #00000000;" />
-      <Button id="unoButton" fx:id="unoButton" layoutX="19.0" layoutY="444.0" mnemonicParsing="false" prefHeight="113.0" prefWidth="154.0" text="UNO!">
-         <font>
-            <Font name="Comic Sans MS Bold" size="29.0" />
-         </font>
-      </Button>
       <Pane fx:id="wishColorParent" layoutX="864.0" layoutY="406.0" mouseTransparent="true" opacity="0.2" prefHeight="170.0" prefWidth="154.0">
          <children>
             <Rectangle fx:id="wishColorBlue" arcHeight="5.0" arcWidth="5.0" fill="BLUE" height="60.0" layoutX="8.0" layoutY="23.0" stroke="BLACK" strokeType="INSIDE" width="60.0" />

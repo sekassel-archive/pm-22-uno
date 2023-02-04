@@ -37,6 +37,7 @@ public class GameService {
 
     public Game generateGame(int botCount, String playerName) {
         game = new Game();
+        game.setClockwise(true);
         List<Card> deck = generateDeck();
         game.withDrawCards(deck);
 
@@ -80,22 +81,27 @@ public class GameService {
             imageView.setFitWidth(64);
             imageView.setFitHeight(96);
             drawPile.getChildren().add(imageView);
-            imageView.setOnMouseClicked(this::drawCard);
+            imageView.setOnMouseClicked(this::drawClickCard);
             //drawPile.getChildren().get(drawPile.getChildren().size()-1).setTranslateX((count / 16));
             //TODO: refresh stack graphic every time something is drawn
             drawPile.getChildren().get(drawPile.getChildren().size()-1).setTranslateY(-(count / 8));
         }
     }
 
-    private void drawCard(MouseEvent mouseEvent) {
+    public void drawClickCard(MouseEvent mouseEvent) {
+        drawCard(true);
+    }
+
+    public void drawCard(boolean skip) {
         Card card = game.getDrawCards().get(0);
         game.getCurrentPlayer().withCards(card);
         game.withoutDrawCards(card);
-        if(!cardIsPlayable(card, game.getDiscardCards().get(game.getDiscardCards().size()-1))){
-            passTurn();
-        }
-        else{
-            playClickedCard(null);
+        if (skip) {
+            if (!cardIsPlayable(card, game.getDiscardCards().get(game.getDiscardCards().size() - 1))) {
+                passTurn();
+            } else {
+                playClickedCard(null);
+            }
         }
     }
 
@@ -171,12 +177,17 @@ public class GameService {
             }
             return false;
         }
+        //TODO: fix bot wished color and drawn card isn't played afterwards
         else return wildCardFirstCard || cardToPlay.getColor().equals(discardTopCard.getColor()) || (cardToPlay.getNumber() != -1 && (cardToPlay.getNumber() == discardTopCard.getNumber())) || 
         (!cardType.equals(CARD_TYPE.NORMAL.toString()) && cardType.equals(discardTopCard.getType()));
     }
 
     public void passTurn(){
-        game.setCurrentPlayer(game.getCurrentPlayer().getNextPlayer());
+        if (game.isClockwise()) {
+            game.setCurrentPlayer(game.getCurrentPlayer().getNextPlayer());
+        } else {
+            game.setCurrentPlayer(game.getCurrentPlayer().getPreviousPlayer());
+        }
     }
 
     private void onMouseExitCard(MouseEvent mouseEvent) {
