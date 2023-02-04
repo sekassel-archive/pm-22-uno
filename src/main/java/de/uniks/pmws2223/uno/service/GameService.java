@@ -131,8 +131,21 @@ public class GameService {
 
     private void playCard(MouseEvent mouseEvent) {
         Card card = (Card) ((Pane)mouseEvent.getSource()).getUserData();
-        player.withoutCards(card);
-        game.withDiscardCards(card);
+        Card discardPileTopCard = game.getDiscardCards().get(game.getDiscardCards().size()-1);
+        String discardPileTopCardType = discardPileTopCard.getType();
+        boolean wildCardFirstCard = game.getDiscardCards().size() == 1 && (discardPileTopCardType.equals(CARD_TYPE.WILD.toString()) || discardPileTopCardType.equals(CARD_TYPE.WILD_DRAW_FOUR.toString()));
+        String cardType = card.getType();
+        boolean isWildCard = (cardType.equals(CARD_TYPE.WILD.toString()) || cardType.equals(CARD_TYPE.WILD_DRAW_FOUR.toString()));
+
+        if(isWildCard){
+            
+        }
+        else if(wildCardFirstCard || card.getColor().equals(discardPileTopCard.getColor()) || (card.getNumber() != -1 && (card.getNumber() == discardPileTopCard.getNumber())) || 
+            (!cardType.equals(CARD_TYPE.NORMAL.toString()) && cardType.equals(discardPileTopCard.getType()))){
+
+                player.withoutCards(card);
+                game.withDiscardCards(card);
+            }
     }
 
     private void onMouseExitCard(MouseEvent mouseEvent) {

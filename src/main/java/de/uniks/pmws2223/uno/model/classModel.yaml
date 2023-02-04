@@ -16,19 +16,19 @@
   roles: 	card_owner 	card_Game_discardCards 	card_Game_drawCards
 
 - player: 	org.fulib.classmodel.Clazz
-  attributes: 	player_name 	player_isBot
+  attributes: 	player_name 	player_isBot 	player_wishedColor
   model: 	c
   modified: 	false
   name: 	Player
   propertyStyle: 	Bean
-  roles: 	player_cards 	player_previousPlayer 	player_nextPlayer 	player_Game_players
+  roles: 	player_cards 	player_previousPlayer 	player_nextPlayer 	player_currentGame 	player_Game_players
 
 - game: 	org.fulib.classmodel.Clazz
   model: 	c
   modified: 	false
   name: 	Game
   propertyStyle: 	Bean
-  roles: 	game_players 	game_discardCards 	game_drawCards
+  roles: 	game_currentPlayer 	game_players 	game_discardCards 	game_drawCards
 
 - c1: 	org.fulib.classmodel.CollectionType
   implClass: 	class java.util.ArrayList
@@ -114,6 +114,15 @@
   type: 	boolean
   typeSignature: 	boolean
 
+- player_wishedColor: 	org.fulib.classmodel.Attribute
+  clazz: 	player
+  id: 	Player_wishedColor
+  modified: 	false
+  name: 	wishedColor
+  propertyStyle: 	Bean
+  type: 	String
+  typeSignature: 	String
+
 - player_cards: 	org.fulib.classmodel.AssocRole
   aggregation: 	false
   cardinality: 	42
@@ -146,6 +155,16 @@
   other: 	player_previousPlayer
   propertyStyle: 	Bean
 
+- player_currentGame: 	org.fulib.classmodel.AssocRole
+  aggregation: 	false
+  cardinality: 	1
+  clazz: 	player
+  id: 	Player_currentGame
+  modified: 	false
+  name: 	currentGame
+  other: 	game_currentPlayer
+  propertyStyle: 	Bean
+
 - player_Game_players: 	org.fulib.classmodel.AssocRole
   aggregation: 	false
   cardinality: 	0
@@ -156,6 +175,16 @@
   other: 	game_players
   propertyStyle: 	Bean
   roleType: 	"java.util.ArrayList<%s>"
+
+- game_currentPlayer: 	org.fulib.classmodel.AssocRole
+  aggregation: 	false
+  cardinality: 	1
+  clazz: 	game
+  id: 	Game_currentPlayer
+  modified: 	false
+  name: 	currentPlayer
+  other: 	player_currentGame
+  propertyStyle: 	Bean
 
 - game_players: 	org.fulib.classmodel.AssocRole
   aggregation: 	false

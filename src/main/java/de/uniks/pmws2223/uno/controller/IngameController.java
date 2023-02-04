@@ -13,8 +13,10 @@ import de.uniks.pmws2223.uno.model.Player;
 import de.uniks.pmws2223.uno.service.BotService;
 import de.uniks.pmws2223.uno.service.GameService;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.Label;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
@@ -33,6 +35,7 @@ public class IngameController implements Controller{
     private List<Card> deck;
     private final List<PlayerController> playerControllers = new ArrayList<>();
     private PropertyChangeListener discardListener;
+    private Pane wishColorParent;
 
     public IngameController(App app, Game game, GameService gameService){
         this.app = app;
@@ -54,8 +57,13 @@ public class IngameController implements Controller{
     @Override
     public Parent render() throws IOException {
         final Parent parent = FXMLLoader.load(Main.class.getResource("view/Ingame.fxml"));
+        wishColorParent = (Pane) parent.lookup("#wishColorParent");
+        for(Node colorRec : wishColorParent.getChildren()){
+            colorRec.setOnMouseClicked(this::wishColor);
+        }
+
         for(Player player : game.getPlayers()){
-            PlayerController playerController = new PlayerController(player, gameService);
+            PlayerController playerController = new PlayerController(player, gameService, player.isIsBot() ? null : wishColorParent);
             playerController.init();
             playerControllers.add(playerController);
 
@@ -83,6 +91,17 @@ public class IngameController implements Controller{
 
         return parent;
     }
+
+    private void wishColor(MouseEvent mouseEvent){
+        Rectangle rec = (Rectangle) mouseEvent.getSource();
+        for(Node recs : wishColorParent.getChildren()){
+            ((Rectangle) recs).setStrokeWidth(1);
+        }
+        rec.setStrokeWidth(4);
+        for(Player player : game.getPlayers()){
+            player.setWishedColor(rec.getFill().toString());
+        }
+    } 
 
     @Override
     public void destroy() {

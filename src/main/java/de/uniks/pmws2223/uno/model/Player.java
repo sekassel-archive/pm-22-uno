@@ -13,12 +13,16 @@ public class Player
    public static final String PROPERTY_PREVIOUS_PLAYER = "previousPlayer";
    public static final String PROPERTY_NEXT_PLAYER = "nextPlayer";
    public static final String PROPERTY_IS_BOT = "isBot";
+   public static final String PROPERTY_CURRENT_GAME = "currentGame";
+   public static final String PROPERTY_WISHED_COLOR = "wishedColor";
    private String name;
    private List<Card> cards;
    private Player previousPlayer;
    private Player nextPlayer;
    protected PropertyChangeSupport listeners;
    private boolean isBot;
+   private Game currentGame;
+   private String wishedColor;
 
    public String getName()
    {
@@ -176,6 +180,51 @@ public class Player
       return this;
    }
 
+   public Game getCurrentGame()
+   {
+      return this.currentGame;
+   }
+
+   public Player setCurrentGame(Game value)
+   {
+      if (this.currentGame == value)
+      {
+         return this;
+      }
+
+      final Game oldValue = this.currentGame;
+      if (this.currentGame != null)
+      {
+         this.currentGame = null;
+         oldValue.setCurrentPlayer(null);
+      }
+      this.currentGame = value;
+      if (value != null)
+      {
+         value.setCurrentPlayer(this);
+      }
+      this.firePropertyChange(PROPERTY_CURRENT_GAME, oldValue, value);
+      return this;
+   }
+
+   public String getWishedColor()
+   {
+      return this.wishedColor;
+   }
+
+   public Player setWishedColor(String value)
+   {
+      if (Objects.equals(value, this.wishedColor))
+      {
+         return this;
+      }
+
+      final String oldValue = this.wishedColor;
+      this.wishedColor = value;
+      this.firePropertyChange(PROPERTY_WISHED_COLOR, oldValue, value);
+      return this;
+   }
+
    public boolean firePropertyChange(String propertyName, Object oldValue, Object newValue)
    {
       if (this.listeners != null)
@@ -200,6 +249,7 @@ public class Player
    {
       final StringBuilder result = new StringBuilder();
       result.append(' ').append(this.getName());
+      result.append(' ').append(this.getWishedColor());
       return result.substring(1);
    }
 
@@ -208,5 +258,6 @@ public class Player
       this.withoutCards(new ArrayList<>(this.getCards()));
       this.setPreviousPlayer(null);
       this.setNextPlayer(null);
+      this.setCurrentGame(null);
    }
 }

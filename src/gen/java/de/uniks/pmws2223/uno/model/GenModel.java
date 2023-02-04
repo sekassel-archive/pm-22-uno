@@ -12,6 +12,9 @@ public class GenModel implements ClassModelDecorator {
         @Link
         List<Player> players;
 
+        @Link("currentGame")
+        Player currentPlayer;
+
         @Link
         List<Card> discardCards;
 
@@ -24,6 +27,8 @@ public class GenModel implements ClassModelDecorator {
 
         boolean isBot;
 
+        String wishedColor;
+
         @Link("nextPlayer")
         Player previousPlayer;
         
@@ -32,6 +37,9 @@ public class GenModel implements ClassModelDecorator {
 
         @Link("owner")
         List<Card> cards;
+
+        @Link("currentPlayer")
+        Game currentGame;
     }
 
     class Card {

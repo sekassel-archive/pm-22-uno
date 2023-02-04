@@ -7,13 +7,42 @@ import java.beans.PropertyChangeSupport;
 
 public class Game
 {
+   public static final String PROPERTY_CURRENT_PLAYER = "currentPlayer";
    public static final String PROPERTY_PLAYERS = "players";
    public static final String PROPERTY_DISCARD_CARDS = "discardCards";
    public static final String PROPERTY_DRAW_CARDS = "drawCards";
    protected PropertyChangeSupport listeners;
+   private Player currentPlayer;
    private List<Player> players;
    private List<Card> discardCards;
    private List<Card> drawCards;
+
+   public Player getCurrentPlayer()
+   {
+      return this.currentPlayer;
+   }
+
+   public Game setCurrentPlayer(Player value)
+   {
+      if (this.currentPlayer == value)
+      {
+         return this;
+      }
+
+      final Player oldValue = this.currentPlayer;
+      if (this.currentPlayer != null)
+      {
+         this.currentPlayer = null;
+         oldValue.setCurrentGame(null);
+      }
+      this.currentPlayer = value;
+      if (value != null)
+      {
+         value.setCurrentGame(this);
+      }
+      this.firePropertyChange(PROPERTY_CURRENT_PLAYER, oldValue, value);
+      return this;
+   }
 
    public List<Player> getPlayers()
    {
@@ -228,6 +257,7 @@ public class Game
 
    public void removeYou()
    {
+      this.setCurrentPlayer(null);
       this.withoutPlayers(new ArrayList<>(this.getPlayers()));
       this.withoutDiscardCards(new ArrayList<>(this.getDiscardCards()));
       this.withoutDrawCards(new ArrayList<>(this.getDrawCards()));

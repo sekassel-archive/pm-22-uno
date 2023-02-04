@@ -3,16 +3,19 @@ package de.uniks.pmws2223.uno.controller;
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
 
+import de.uniks.pmws2223.uno.Constants.CARD_TYPE;
 import de.uniks.pmws2223.uno.model.Card;
 import de.uniks.pmws2223.uno.model.Player;
 import de.uniks.pmws2223.uno.service.GameService;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.control.Label;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 
 public class PlayerController implements Controller{
@@ -20,10 +23,12 @@ public class PlayerController implements Controller{
     final private Player player;
     private PropertyChangeListener cardListener;
     private GameService gameService;
+    private Pane wishColorParent;
 
-    public PlayerController(Player player, GameService gameService){
+    public PlayerController(Player player, GameService gameService, Pane wishColorParent){
         this.player = player;
         this.gameService = gameService;
+        this.wishColorParent = wishColorParent;
     }
 
     @Override
@@ -77,9 +82,18 @@ public class PlayerController implements Controller{
                 Pane newUICard = gameService.generateUICard(newCard, owner.isIsBot());
 
                 cardBox.getChildren().add(newUICard);
+                if(!player.isIsBot() && (newCard.getType().equals(CARD_TYPE.WILD.toString()) || newCard.getType().equals(CARD_TYPE.WILD_DRAW_FOUR.toString()))){
+                    wishColorParent.setOpacity(1);
+                    wishColorParent.setMouseTransparent(false);
+                }
             }
             else if(event.getOldValue() != null){
                 cardBox.getChildren().removeIf(card -> card.getUserData().equals(event.getOldValue()));
+                if(!player.isIsBot() && (((Card) event.getOldValue()).getType().equals(CARD_TYPE.WILD.toString()) || 
+                    ((Card) event.getOldValue()).getType().equals(CARD_TYPE.WILD_DRAW_FOUR.toString()))){
+                    wishColorParent.setOpacity(0.2);
+                    wishColorParent.setMouseTransparent(true);
+                }
             }
         };
 
