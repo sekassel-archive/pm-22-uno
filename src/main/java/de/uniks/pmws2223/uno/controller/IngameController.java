@@ -2,20 +2,22 @@ package de.uniks.pmws2223.uno.controller;
 
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import de.uniks.pmws2223.uno.App;
 import de.uniks.pmws2223.uno.Main;
 import de.uniks.pmws2223.uno.model.Card;
 import de.uniks.pmws2223.uno.model.Game;
 import de.uniks.pmws2223.uno.model.Player;
+import de.uniks.pmws2223.uno.service.AnimationService;
 import de.uniks.pmws2223.uno.service.BotService;
 import de.uniks.pmws2223.uno.service.GameService;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -31,17 +33,20 @@ public class IngameController implements Controller{
     private final App app;
     private final Game game;
     private final BotService botService;
+    private AnimationService animationService;
     private final GameService gameService;
     private List<Card> deck;
     private final List<PlayerController> playerControllers = new ArrayList<>();
     private PropertyChangeListener discardListener;
+    private PropertyChangeListener drawListener;
     private Pane wishColorParent;
 
-    public IngameController(App app, Game game, GameService gameService){
+    public IngameController(App app, Game game, GameService gameService, AnimationService animationService){
         this.app = app;
         this.game = game;
         this.gameService = gameService;
         this.botService = new BotService(gameService);
+        this.animationService = animationService;
     }
 
     @Override
@@ -64,7 +69,7 @@ public class IngameController implements Controller{
         }
 
         for(Player player : game.getPlayers()){
-            PlayerController playerController = new PlayerController(player, gameService, player.isIsBot() ? null : wishColorParent, botService);
+            PlayerController playerController = new PlayerController(player, gameService, player.isIsBot() ? null : wishColorParent, botService, animationService);
             playerController.init();
             playerControllers.add(playerController);
 
@@ -123,7 +128,33 @@ public class IngameController implements Controller{
             }
         };
 
+        drawListener = event -> {
+            if (event.getNewValue() != null) {
+                ImageView imageView = new ImageView(new Image(Objects.requireNonNull(Main.class.getResourceAsStream("image/cards/back.png"))));
+                imageView.setFitWidth(64);
+                imageView.setFitHeight(96);
+                drawPile.getChildren().add(imageView);
+                imageView.setOnMouseClicked(gameService::drawClickCard);
+                //drawPile.getChildren().get(drawPile.getChildren().size()-1).setTranslateX((count / 16));
+                drawPile.getChildren().get(drawPile.getChildren().size()-1).setTranslateY(-((float)game.getDrawCards().size() / 8));
+            } else if (event.getOldValue() != null) {
+                drawPile.getChildren().remove(game.getDrawCards().size());
+                if (game.getDrawCards().size() == 0) {
+                    List<Card> newDeck = new ArrayList<>();//game.getDiscardCards().subList(0, game.getDiscardCards().size() - 2);
+                    while (game.getDiscardCards().size() >= 2) {
+                        newDeck.add(game.getDiscardCards().get(0));
+                        game.withoutDiscardCards(game.getDiscardCards().get(0));
+                    }
+                    //System.out.println(newDeck);
+                    //game.withoutDiscardCards(newDeck);
+                    Collections.shuffle(newDeck);
+                    game.withDrawCards(newDeck);
+                }
+            }
+        };
+
         game.listeners().addPropertyChangeListener(Game.PROPERTY_DISCARD_CARDS, discardListener);
+        game.listeners().addPropertyChangeListener(Game.PROPERTY_DRAW_CARDS, drawListener);
 
         return parent;
     }
@@ -142,6 +173,7 @@ public class IngameController implements Controller{
     @Override
     public void destroy() {
         game.listeners().removePropertyChangeListener(Game.PROPERTY_DISCARD_CARDS, discardListener);
+        game.listeners().removePropertyChangeListener(Game.PROPERTY_DRAW_CARDS, drawListener);
     }
     
 }

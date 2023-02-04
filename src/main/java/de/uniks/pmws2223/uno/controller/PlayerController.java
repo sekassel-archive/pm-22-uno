@@ -8,19 +8,19 @@ import java.util.TimerTask;
 import de.uniks.pmws2223.uno.Constants.CARD_TYPE;
 import de.uniks.pmws2223.uno.model.Card;
 import de.uniks.pmws2223.uno.model.Player;
+import de.uniks.pmws2223.uno.service.AnimationService;
 import de.uniks.pmws2223.uno.service.BotService;
 import de.uniks.pmws2223.uno.service.GameService;
+import javafx.animation.Interpolator;
 import javafx.application.Platform;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.Label;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 
 public class PlayerController implements Controller{
@@ -30,14 +30,16 @@ public class PlayerController implements Controller{
     private PropertyChangeListener currentPlayerListener;
     private GameService gameService;
     private BotService botService;
+    private AnimationService animationService;
     private Pane wishColorParent;
     private Label nameLabel;
 
-    public PlayerController(Player player, GameService gameService, Pane wishColorParent, BotService botService){
+    public PlayerController(Player player, GameService gameService, Pane wishColorParent, BotService botService, AnimationService animationService){
         this.player = player;
         this.gameService = gameService;
         this.wishColorParent = wishColorParent;
         this.botService = botService;
+        this.animationService = animationService;
     }
 
     @Override
@@ -92,6 +94,7 @@ public class PlayerController implements Controller{
                 Pane newUICard = gameService.generateUICard(newCard, owner.isIsBot());
 
                 cardBox.getChildren().add(newUICard);
+                flyInCards(newUICard);
                 if(!player.isIsBot() && (newCard.getType().equals(CARD_TYPE.WILD.toString()) || newCard.getType().equals(CARD_TYPE.WILD_DRAW_FOUR.toString()))){
                     wishColorParent.setOpacity(1);
                     wishColorParent.setMouseTransparent(false);
@@ -165,6 +168,14 @@ public class PlayerController implements Controller{
         player.listeners().addPropertyChangeListener(Player.PROPERTY_CARDS ,cardListener);
 
         return parent;
+    }
+
+    private void flyInCards(Pane newUICard) {
+        for (Node child : newUICard.getChildren()) {
+            animationService.moveNode(child, 200, 0, 1, Interpolator.EASE_BOTH).setOnFinished(e -> {
+                animationService.fadeTranslate(child, 0, 0, 0, 1, 300);
+            });
+        }
     }
 
     @Override

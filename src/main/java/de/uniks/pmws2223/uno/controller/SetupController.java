@@ -5,6 +5,7 @@ import java.io.IOException;
 import de.uniks.pmws2223.uno.App;
 import de.uniks.pmws2223.uno.Main;
 import de.uniks.pmws2223.uno.model.Game;
+import de.uniks.pmws2223.uno.service.AnimationService;
 import de.uniks.pmws2223.uno.service.GameService;
 
 import static de.uniks.pmws2223.uno.Constants.*;
@@ -39,8 +40,9 @@ public class SetupController implements Controller{
         final Slider botSlider = (Slider) parent.lookup("#botSlider");
 
         playButton.setOnAction(event -> {
-            GameService gameService = new GameService();
-            app.show(new IngameController(app, gameService.generateGame((int) botSlider.getValue(), nameField.getText()), gameService));
+            AnimationService animationService = new AnimationService();
+            GameService gameService = new GameService(animationService);
+            app.show(new IngameController(app, gameService.generateGame((int) botSlider.getValue(), nameField.getText()), gameService, animationService));
         });
 
         return parent;

@@ -9,6 +9,7 @@ import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
@@ -25,9 +26,13 @@ import static de.uniks.pmws2223.uno.Constants.UNO_DECK;
 
 public class GameService {
 
-    private final AnimationService animationService = new AnimationService();
+    private final AnimationService animationService;
     private Game game;
     private Player player;
+
+    public GameService(AnimationService animationService) {
+        this.animationService = animationService;
+    }
 
     public List<Card> generateDeck() {
         ArrayList<Card> deck = new ArrayList<Card>(UNO_DECK);
@@ -83,8 +88,7 @@ public class GameService {
             drawPile.getChildren().add(imageView);
             imageView.setOnMouseClicked(this::drawClickCard);
             //drawPile.getChildren().get(drawPile.getChildren().size()-1).setTranslateX((count / 16));
-            //TODO: refresh stack graphic every time something is drawn
-            drawPile.getChildren().get(drawPile.getChildren().size()-1).setTranslateY(-(count / 8));
+            drawPile.getChildren().get(drawPile.getChildren().size()-1).setTranslateY(-((float)count / 8));
         }
     }
 
@@ -95,7 +99,6 @@ public class GameService {
     }
 
     public void drawCard(boolean skip) {
-        //TODO: refresh deck once it runs out
         Card card = game.getDrawCards().get(0);
         game.getCurrentPlayer().withCards(card);
         game.withoutDrawCards(card);
@@ -113,7 +116,7 @@ public class GameService {
         Pane UIcard = new Pane();
         UIcard.setUserData(card);
         Rectangle rec = new Rectangle();
-        rec.setWidth(56);
+        rec.setWidth(58);
         rec.setHeight(90);
 
         //Color color = Color.web(card.getColor(), 1);
@@ -135,8 +138,8 @@ public class GameService {
         imageView.setFitHeight(96);
 
         UIcard.getChildren().add(rec);
-        UIcard.getChildren().get(0).setLayoutX(4);
-        UIcard.getChildren().get(0).setLayoutY(5);
+        UIcard.getChildren().get(0).setLayoutX(3);
+        UIcard.getChildren().get(0).setLayoutY(3);
         //UIcard.getChildren().add(val);
         UIcard.getChildren().add(imageView);
 
@@ -193,8 +196,7 @@ public class GameService {
             }
             return false;
         }
-        //TODO: fix bot wished color and drawn card isn't played afterwards
-        else return wildCardFirstCard || cardToPlay.getColor().equals(discardTopCard.getColor()) || (cardToPlay.getNumber() != -1 && (cardToPlay.getNumber() == discardTopCard.getNumber())) || 
+        else return wildCardFirstCard || cardToPlay.getColor().equals(discardTopCard.getColor()) || (cardToPlay.getNumber() != -1 && (cardToPlay.getNumber() == discardTopCard.getNumber())) ||
         (!cardType.equals(CARD_TYPE.NORMAL.toString()) && cardType.equals(discardTopCard.getType()));
     }
 
@@ -210,7 +212,7 @@ public class GameService {
         Pane pane = (Pane) mouseEvent.getSource();
         animationService.moveNode(pane.getChildren().get(0), 0, 0, 100, Interpolator.EASE_BOTH);
         animationService.moveNode(pane.getChildren().get(1), 0, 0, 100, Interpolator.EASE_BOTH);
-        //pane.setViewOrder((int) pane.getUserData());
+        //pane.setViewOrder(-((HBox) pane.getParent()).getChildren().indexOf(pane));
     }
 
     private void onMouseEnterCard(MouseEvent mouseEvent) {
