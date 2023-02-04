@@ -94,8 +94,15 @@ public class IngameController implements Controller{
                 if (CARD_TYPE.SKIP.toString().equals(type)) {
                     game.setCurrentPlayer(game.getCurrentPlayer().getNextPlayer().getNextPlayer());
                 } else if (CARD_TYPE.REVERSE.toString().equals(type)) {
-                    game.setClockwise(!game.isClockwise());
-                    gameService.passTurn();
+                    if (game.getPlayers().size() > 2) {
+                        game.setClockwise(!game.isClockwise());
+                        gameService.passTurn();
+                    } else {
+                        //TODO: bot skip doesnt work with 2 players (player + bot)
+                        Player player = game.getCurrentPlayer();
+                        game.setCurrentPlayer(null);
+                        game.setCurrentPlayer(player);
+                    }
                 } else if (CARD_TYPE.WILD_DRAW_FOUR.toString().equals(type)) {
                     if (game.isClockwise()) {
                         game.getCurrentPlayer().getNextPlayer().setDebtCount(4);

@@ -95,6 +95,7 @@ public class GameService {
     }
 
     public void drawCard(boolean skip) {
+        //TODO: refresh deck once it runs out
         Card card = game.getDrawCards().get(0);
         game.getCurrentPlayer().withCards(card);
         game.withoutDrawCards(card);
