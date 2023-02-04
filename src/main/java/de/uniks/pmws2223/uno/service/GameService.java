@@ -51,10 +51,11 @@ public class GameService {
 
         //Set Order
         for (int _i = 0; _i < game.getPlayers().size(); _i++) {
-            Player player = game.getPlayers().get(_i);
-            player.setNextPlayer(game.getPlayers().get((_i + 1) % (game.getPlayers().size() - 1)));
+            Player _player = game.getPlayers().get(_i);
+            _player.setNextPlayer(game.getPlayers().get((_i + 1) % (game.getPlayers().size())));
         }
 
+        game.setCurrentPlayer(player);
         return game;
     }
 
@@ -80,8 +81,9 @@ public class GameService {
             imageView.setFitHeight(96);
             drawPile.getChildren().add(imageView);
             imageView.setOnMouseClicked(this::drawCard);
-            //drawPile.getChildren().get(0).setLayoutX(count * 5);
-            //drawPile.getChildren().get(0).setLayoutY(count * 5);
+            //drawPile.getChildren().get(drawPile.getChildren().size()-1).setTranslateX((count / 16));
+            //TODO: refresh stack graphic every time something is drawn
+            drawPile.getChildren().get(drawPile.getChildren().size()-1).setTranslateY(-(count / 8));
         }
     }
 
@@ -89,6 +91,12 @@ public class GameService {
         Card card = game.getDrawCards().get(0);
         player.withCards(card);
         game.withoutDrawCards(card);
+        if(!cardIsPlayable(card, game.getDiscardCards().get(game.getDiscardCards().size()-1))){
+            passTurn();
+        }
+        else{
+            playCard(null);
+        }
     }
 
     public Pane generateUICard(Card card, boolean hidden) {
@@ -130,22 +138,40 @@ public class GameService {
     }
 
     private void playCard(MouseEvent mouseEvent) {
-        Card card = (Card) ((Pane)mouseEvent.getSource()).getUserData();
+        Card card;
+        if(mouseEvent != null){
+            card = (Card) ((Pane)mouseEvent.getSource()).getUserData();
+        }
+        else{
+            card = game.getCurrentPlayer().getCards().get(game.getCurrentPlayer().getCards().size()-1);
+        }
         Card discardPileTopCard = game.getDiscardCards().get(game.getDiscardCards().size()-1);
-        String discardPileTopCardType = discardPileTopCard.getType();
+
+        if(cardIsPlayable(card, discardPileTopCard)){
+            player.withoutCards(card);
+            game.withDiscardCards(card);
+        }
+    }
+
+    private boolean cardIsPlayable(Card cardToPlay, Card discardTopCard){
+        String discardPileTopCardType = discardTopCard.getType();
         boolean wildCardFirstCard = game.getDiscardCards().size() == 1 && (discardPileTopCardType.equals(CARD_TYPE.WILD.toString()) || discardPileTopCardType.equals(CARD_TYPE.WILD_DRAW_FOUR.toString()));
-        String cardType = card.getType();
+        String cardType = cardToPlay.getType();
         boolean isWildCard = (cardType.equals(CARD_TYPE.WILD.toString()) || cardType.equals(CARD_TYPE.WILD_DRAW_FOUR.toString()));
 
         if(isWildCard){
-            
-        }
-        else if(wildCardFirstCard || card.getColor().equals(discardPileTopCard.getColor()) || (card.getNumber() != -1 && (card.getNumber() == discardPileTopCard.getNumber())) || 
-            (!cardType.equals(CARD_TYPE.NORMAL.toString()) && cardType.equals(discardPileTopCard.getType()))){
-
-                player.withoutCards(card);
-                game.withDiscardCards(card);
+            if(cardToPlay.getOwner().getWishedColor() != null){
+                cardToPlay.setColor(cardToPlay.getOwner().getWishedColor());
+                return true;
             }
+            return false;
+        }
+        else return wildCardFirstCard || cardToPlay.getColor().equals(discardTopCard.getColor()) || (cardToPlay.getNumber() != -1 && (cardToPlay.getNumber() == discardTopCard.getNumber())) || 
+        (!cardType.equals(CARD_TYPE.NORMAL.toString()) && cardType.equals(discardTopCard.getType()));
+    }
+
+    public void passTurn(){
+        game.setCurrentPlayer(game.getCurrentPlayer().getNextPlayer());
     }
 
     private void onMouseExitCard(MouseEvent mouseEvent) {

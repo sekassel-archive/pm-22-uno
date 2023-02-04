@@ -84,6 +84,7 @@ public class IngameController implements Controller{
         discardListener = evt -> {
             if (evt.getNewValue() != null) {
                 discardPile.getChildren().add(gameService.generateUICard((Card) evt.getNewValue(), false));
+                gameService.passTurn();
             }
         };
 

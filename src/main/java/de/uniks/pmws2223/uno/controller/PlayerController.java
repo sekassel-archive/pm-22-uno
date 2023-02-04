@@ -15,6 +15,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 
@@ -22,8 +23,10 @@ public class PlayerController implements Controller{
 
     final private Player player;
     private PropertyChangeListener cardListener;
+    private PropertyChangeListener currentPlayerListener;
     private GameService gameService;
     private Pane wishColorParent;
+    private Label nameLabel;
 
     public PlayerController(Player player, GameService gameService, Pane wishColorParent){
         this.player = player;
@@ -51,6 +54,7 @@ public class PlayerController implements Controller{
             parentBox.setMinWidth(333);
             cardBox = new HBox();
             Label botName = new Label();
+            nameLabel = botName;
             botName.setText(player.getName());
             botName.setFont(Font.font("Comic Sans MS", 29));
             botName.setUnderline(true);
@@ -97,6 +101,18 @@ public class PlayerController implements Controller{
             }
         };
 
+        currentPlayerListener = event -> {
+            if(player.isIsBot()){
+                if(event.getNewValue() == null){
+                    nameLabel.setTextFill(Color.BLACK);
+                }
+                else{
+                    nameLabel.setTextFill(Color.RED);
+                }
+            }
+        };
+
+        player.listeners().addPropertyChangeListener(Player.PROPERTY_CURRENT_GAME, currentPlayerListener);
         player.listeners().addPropertyChangeListener(Player.PROPERTY_CARDS ,cardListener);
 
         return parent;
