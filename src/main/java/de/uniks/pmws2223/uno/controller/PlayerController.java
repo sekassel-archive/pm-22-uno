@@ -144,6 +144,20 @@ public class PlayerController implements Controller{
                     };
                     timer.schedule(task, 2000);
                 }
+            } else {
+                if(event.getNewValue() != null) {
+                    if (player.getDebtCount() > 0) {
+                        Card cardToPlay = botService.checkCardsForPlayable(player, player.getDebtCount() == 2 ? CARD_TYPE.DRAW_TWO.toString() : CARD_TYPE.WILD_DRAW_FOUR.toString());
+                        System.out.println(cardToPlay);
+                        if (cardToPlay == null) {
+                            for (int i = 0; i < player.getDebtCount(); i++) {
+                                gameService.drawCard(false);
+                            }
+                            player.setDebtCount(0);
+                            gameService.passTurn();
+                        }
+                    }
+                }
             }
         };
 

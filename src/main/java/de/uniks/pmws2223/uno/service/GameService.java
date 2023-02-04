@@ -89,7 +89,9 @@ public class GameService {
     }
 
     public void drawClickCard(MouseEvent mouseEvent) {
-        drawCard(true);
+        if (player.getCurrentGame() != null) {
+            drawCard(true);
+        }
     }
 
     public void drawCard(boolean skip) {
@@ -100,7 +102,8 @@ public class GameService {
             if (!cardIsPlayable(card, game.getDiscardCards().get(game.getDiscardCards().size() - 1))) {
                 passTurn();
             } else {
-                playClickedCard(null);
+                Card _card = game.getCurrentPlayer().getCards().get(game.getCurrentPlayer().getCards().size() - 1);
+                playCard(_card);
             }
         }
     }
@@ -145,14 +148,26 @@ public class GameService {
     }
 
     public void playClickedCard(MouseEvent mouseEvent) {
-        Card card;
-        if(mouseEvent != null){
-            card = (Card) ((Pane)mouseEvent.getSource()).getUserData();
+        if (player.getCurrentGame() != null) {
+            Card card;
+            if (mouseEvent != null) {
+                if (player.getDebtCount() == 0) {
+                    card = (Card) ((Pane) mouseEvent.getSource()).getUserData();
+                } else {
+                    Card _card = (Card) ((Pane) mouseEvent.getSource()).getUserData();
+                    if (player.getDebtCount() == 2 && (_card.getType().equals(CARD_TYPE.DRAW_TWO.toString()))) {
+                        card = _card;
+                        player.setDebtCount(0);
+                    } else if (player.getDebtCount() == 4 && (_card.getType().equals(CARD_TYPE.WILD_DRAW_FOUR.toString()))) {
+                        card = _card;
+                        player.setDebtCount(0);
+                    } else return;
+                }
+            } else {
+                card = game.getCurrentPlayer().getCards().get(game.getCurrentPlayer().getCards().size() - 1);
+            }
+            playCard(card);
         }
-        else{
-            card = game.getCurrentPlayer().getCards().get(game.getCurrentPlayer().getCards().size()-1);
-        }
-        playCard(card);
     }
 
     public void playCard(Card card){

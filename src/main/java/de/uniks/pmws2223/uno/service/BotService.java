@@ -30,16 +30,16 @@ public class BotService {
         int greenCount = 0;
         for (Card card : bot.getCards()) {
             if (card.getColor() != null) {
-                if (card.getColor().equals(Constants.CARD_COLOR.YELLOW.toString())) yellowCount++;
-                if (card.getColor().equals(Constants.CARD_COLOR.RED.toString())) redCount++;
-                if (card.getColor().equals(Constants.CARD_COLOR.BLUE.toString())) blueCount++;
-                if (card.getColor().equals(Constants.CARD_COLOR.GREEN.toString())) greenCount++;
+                if (card.getColor().equals(Constants.CARD_COLOR.YELLOW.getColor().toString())) yellowCount++;
+                if (card.getColor().equals(Constants.CARD_COLOR.RED.getColor().toString())) redCount++;
+                if (card.getColor().equals(Constants.CARD_COLOR.BLUE.getColor().toString())) blueCount++;
+                if (card.getColor().equals(Constants.CARD_COLOR.GREEN.getColor().toString())) greenCount++;
             }
         }
         int max = Collections.max(List.of(yellowCount, redCount, blueCount, greenCount));
-        if (yellowCount ==  max) return Constants.CARD_COLOR.YELLOW.toString();
-        else if (redCount ==  max) return Constants.CARD_COLOR.RED.toString();
-        else if (blueCount ==  max) return Constants.CARD_COLOR.BLUE.toString();
-        else return Constants.CARD_COLOR.GREEN.toString();
+        if (yellowCount ==  max) return Constants.CARD_COLOR.YELLOW.getColor().toString();
+        else if (redCount ==  max) return Constants.CARD_COLOR.RED.getColor().toString();
+        else if (blueCount ==  max) return Constants.CARD_COLOR.BLUE.getColor().toString();
+        else return Constants.CARD_COLOR.GREEN.getColor().toString();
     }
 }

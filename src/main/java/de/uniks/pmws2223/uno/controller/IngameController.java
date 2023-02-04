@@ -84,6 +84,11 @@ public class IngameController implements Controller{
 
         discardListener = evt -> {
             if (evt.getNewValue() != null) {
+                //check for victory
+                if (game.getCurrentPlayer().getCards().size() == 0) {
+                    app.show(new GameOverController(app, game.getCurrentPlayer().getName()));
+                }
+
                 discardPile.getChildren().add(gameService.generateUICard((Card) evt.getNewValue(), false));
                 String type = game.getDiscardCards().get(game.getDiscardCards().size() - 1).getType();
                 if (CARD_TYPE.SKIP.toString().equals(type)) {
