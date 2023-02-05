@@ -1,5 +1,6 @@
 package de.uniks.pmws2223.uno.service;
 
+import de.uniks.pmws2223.uno.Constants;
 import de.uniks.pmws2223.uno.Main;
 import de.uniks.pmws2223.uno.model.Card;
 import de.uniks.pmws2223.uno.model.Game;
@@ -9,7 +10,6 @@ import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Objects;
 
 import static de.uniks.pmws2223.uno.Constants.CARD_TYPE;
-import static de.uniks.pmws2223.uno.Constants.UNO_DECK;
 
 public class GameService {
 
@@ -35,9 +34,36 @@ public class GameService {
     }
 
     public List<Card> generateDeck() {
-        ArrayList<Card> deck = new ArrayList<Card>(UNO_DECK);
-        Collections.shuffle(deck);
-        return deck;
+        final List<Card> unoDeck = new ArrayList<Card>();
+        //Normal Cards
+
+        for (int _i = 0; _i < 10; _i++) {
+            for (Constants.CARD_COLOR color : Constants.CARD_COLOR.values()) {
+                unoDeck.add(new Card().setColor(color.getColor().toString()).setNumber(_i).setType(CARD_TYPE.NORMAL.toString()));
+                unoDeck.add(new Card().setColor(color.getColor().toString()).setNumber(_i).setType(CARD_TYPE.NORMAL.toString()));
+            }
+        }
+
+        //Special Cards - for every color, 2 special cards
+        for (Constants.CARD_COLOR color : Constants.CARD_COLOR.values()) {
+            for (CARD_TYPE type : CARD_TYPE.values()) {
+                if (type != CARD_TYPE.NORMAL && type != CARD_TYPE.WILD && type != CARD_TYPE.WILD_DRAW_FOUR) {
+                    unoDeck.add(new Card().setColor(color.getColor().toString()).setNumber(-1).setType(type.toString()));
+                    unoDeck.add(new Card().setColor(color.getColor().toString()).setNumber(-1).setType(type.toString()));
+                }
+            }
+        }
+
+
+        //Black Wild Cards
+        for (int _j = 0; _j < 4; _j++) {
+            unoDeck.add(new Card().setColor(null).setNumber(-1).setType(CARD_TYPE.WILD.toString()));
+            unoDeck.add(new Card().setColor(null).setNumber(-1).setType(CARD_TYPE.WILD_DRAW_FOUR.toString()));
+        }
+
+
+        Collections.shuffle(unoDeck);
+        return unoDeck;
     }
 
     public Game generateGame(int botCount, String playerName) {
@@ -88,7 +114,7 @@ public class GameService {
             drawPile.getChildren().add(imageView);
             imageView.setOnMouseClicked(this::drawClickCard);
             //drawPile.getChildren().get(drawPile.getChildren().size()-1).setTranslateX((count / 16));
-            drawPile.getChildren().get(drawPile.getChildren().size()-1).setTranslateY(-((float)count / 8));
+            drawPile.getChildren().get(drawPile.getChildren().size() - 1).setTranslateY(-((float) count / 4));
         }
     }
 
@@ -119,7 +145,6 @@ public class GameService {
         rec.setWidth(58);
         rec.setHeight(90);
 
-        //Color color = Color.web(card.getColor(), 1);
         if (card.getColor() != null) {
             rec.setFill(Paint.valueOf(card.getColor()));
         } else {
@@ -130,7 +155,6 @@ public class GameService {
         val.setText("" + card.getNumber());
 
         ImageView imageView = new ImageView();
-        hidden = false;
         Image img = !hidden ? cardToImage(card) : new Image(Objects.requireNonNull(Main.class.getResourceAsStream("image/cards/back.png")));
 
         imageView.setImage(img);
@@ -174,33 +198,33 @@ public class GameService {
         }
     }
 
-    public void playCard(Card card){
-        Card discardPileTopCard = game.getDiscardCards().get(game.getDiscardCards().size()-1);
+    public void playCard(Card card) {
+        Card discardPileTopCard = game.getDiscardCards().get(game.getDiscardCards().size() - 1);
 
-        if(cardIsPlayable(card, discardPileTopCard)){
+        if (cardIsPlayable(card, discardPileTopCard)) {
             game.getCurrentPlayer().withoutCards(card);
             game.withDiscardCards(card);
         }
     }
 
-    public boolean cardIsPlayable(Card cardToPlay, Card discardTopCard){
+    public boolean cardIsPlayable(Card cardToPlay, Card discardTopCard) {
         String discardPileTopCardType = discardTopCard.getType();
         boolean wildCardFirstCard = game.getDiscardCards().size() == 1 && (discardPileTopCardType.equals(CARD_TYPE.WILD.toString()) || discardPileTopCardType.equals(CARD_TYPE.WILD_DRAW_FOUR.toString()));
         String cardType = cardToPlay.getType();
         boolean isWildCard = (cardType.equals(CARD_TYPE.WILD.toString()) || cardType.equals(CARD_TYPE.WILD_DRAW_FOUR.toString()));
 
-        if(isWildCard){
-            if(cardToPlay.getOwner().getWishedColor() != null){
+        if (isWildCard) {
+            if (cardToPlay.getOwner().getWishedColor() != null) {
                 cardToPlay.setColor(cardToPlay.getOwner().getWishedColor());
                 return true;
             }
             return false;
-        }
-        else return wildCardFirstCard || cardToPlay.getColor().equals(discardTopCard.getColor()) || (cardToPlay.getNumber() != -1 && (cardToPlay.getNumber() == discardTopCard.getNumber())) ||
-        (!cardType.equals(CARD_TYPE.NORMAL.toString()) && cardType.equals(discardTopCard.getType()));
+        } else
+            return wildCardFirstCard || cardToPlay.getColor().equals(discardTopCard.getColor()) || (cardToPlay.getNumber() != -1 && (cardToPlay.getNumber() == discardTopCard.getNumber())) ||
+                    (!cardType.equals(CARD_TYPE.NORMAL.toString()) && cardType.equals(discardTopCard.getType()));
     }
 
-    public void passTurn(){
+    public void passTurn() {
         if (game.isClockwise()) {
             game.setCurrentPlayer(game.getCurrentPlayer().getNextPlayer());
         } else {
@@ -225,8 +249,6 @@ public class GameService {
     private Image cardToImage(Card card) {
         Image img = null;
         if (card.getNumber() != -1) {
-            //img = new Image(Objects.requireNonNull(Main.class.getResourceAsStream("image/Cards/" + card.getNumber() + ".png")));
-            //TODO: Das lieber zu nem switch statement
             img = new Image(Objects.requireNonNull(Main.class.getResourceAsStream("image/cards/" + card.getNumber() + ".png")));
         } else if (card.getType().equals(CARD_TYPE.DRAW_TWO.toString())) {
             img = new Image(Objects.requireNonNull(Main.class.getResourceAsStream("image/cards/+2.png")));

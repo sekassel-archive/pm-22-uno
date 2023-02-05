@@ -1,10 +1,5 @@
 package de.uniks.pmws2223.uno.controller;
 
-import java.beans.PropertyChangeListener;
-import java.io.IOException;
-import java.util.Timer;
-import java.util.TimerTask;
-
 import de.uniks.pmws2223.uno.Constants.CARD_TYPE;
 import de.uniks.pmws2223.uno.model.Card;
 import de.uniks.pmws2223.uno.model.Player;
@@ -23,7 +18,12 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 
-public class PlayerController implements Controller{
+import java.beans.PropertyChangeListener;
+import java.io.IOException;
+import java.util.Timer;
+import java.util.TimerTask;
+
+public class PlayerController implements Controller {
 
     final private Player player;
     private PropertyChangeListener cardListener;
@@ -34,7 +34,7 @@ public class PlayerController implements Controller{
     private Pane wishColorParent;
     private Label nameLabel;
 
-    public PlayerController(Player player, GameService gameService, Pane wishColorParent, BotService botService, AnimationService animationService){
+    public PlayerController(Player player, GameService gameService, Pane wishColorParent, BotService botService, AnimationService animationService) {
         this.player = player;
         this.gameService = gameService;
         this.wishColorParent = wishColorParent;
@@ -49,15 +49,13 @@ public class PlayerController implements Controller{
 
     @Override
     public void init() {
-        // TODO Auto-generated method stub
-        
     }
 
     @Override
     public Parent render() throws IOException {
         HBox cardBox;
         Parent parent;
-        if(player.isIsBot()){
+        if (player.isIsBot()) {
             VBox parentBox = new VBox();
             parentBox.setMinWidth(333);
             cardBox = new HBox();
@@ -74,8 +72,7 @@ public class PlayerController implements Controller{
             parentBox.getChildren().add(cardBox);
             parentBox.setAlignment(Pos.CENTER);
             parent = parentBox;
-        }
-        else{
+        } else {
             cardBox = new HBox();
             cardBox.setPrefWidth(380);
             cardBox.setPrefHeight(160);
@@ -88,34 +85,23 @@ public class PlayerController implements Controller{
         }
 
         cardListener = event -> {
-            if(event.getNewValue() != null){
+            if (event.getNewValue() != null) {
                 Card newCard = (Card) event.getNewValue();
                 Player owner = newCard.getOwner();
                 Pane newUICard = gameService.generateUICard(newCard, owner.isIsBot());
 
                 cardBox.getChildren().add(newUICard);
                 flyInCards(newUICard);
-                if(!player.isIsBot() && (newCard.getType().equals(CARD_TYPE.WILD.toString()) || newCard.getType().equals(CARD_TYPE.WILD_DRAW_FOUR.toString()))){
-                    wishColorParent.setOpacity(1);
-                    wishColorParent.setMouseTransparent(false);
-                }
-            }
-            else if(event.getOldValue() != null){
+            } else if (event.getOldValue() != null) {
                 cardBox.getChildren().removeIf(card -> card.getUserData().equals(event.getOldValue()));
-                if(!player.isIsBot() && (((Card) event.getOldValue()).getType().equals(CARD_TYPE.WILD.toString()) || 
-                    ((Card) event.getOldValue()).getType().equals(CARD_TYPE.WILD_DRAW_FOUR.toString()))){
-                    wishColorParent.setOpacity(0.2);
-                    wishColorParent.setMouseTransparent(true);
-                }
             }
         };
 
         currentPlayerListener = event -> {
-            if(player.isIsBot()){
-                if(event.getNewValue() == null){
+            if (player.isIsBot()) {
+                if (event.getNewValue() == null) {
                     nameLabel.setTextFill(Color.BLACK);
-                }
-                else{
+                } else {
                     nameLabel.setTextFill(Color.RED);
                     Timer timer = new Timer();
                     TimerTask task = new TimerTask() {
@@ -129,11 +115,10 @@ public class PlayerController implements Controller{
                                     if (cardToPlay != null) gameService.playCard(cardToPlay);
                                     else gameService.drawCard(true);
                                 } else {
-                                    Card cardToPlay =  botService.checkCardsForPlayable(player, player.getDebtCount() == 2 ? CARD_TYPE.DRAW_TWO.toString() : CARD_TYPE.WILD_DRAW_FOUR.toString());
+                                    Card cardToPlay = botService.checkCardsForPlayable(player, player.getDebtCount() == 2 ? CARD_TYPE.DRAW_TWO.toString() : CARD_TYPE.WILD_DRAW_FOUR.toString());
                                     if (cardToPlay != null) {
                                         gameService.playCard(cardToPlay);
-                                    }
-                                    else {
+                                    } else {
                                         for (int i = 0; i < player.getDebtCount(); i++) {
                                             gameService.drawCard(false);
                                         }
@@ -143,15 +128,14 @@ public class PlayerController implements Controller{
                                 }
                             });
                         }
-                        
+
                     };
                     timer.schedule(task, 2000);
                 }
             } else {
-                if(event.getNewValue() != null) {
+                if (event.getNewValue() != null) {
                     if (player.getDebtCount() > 0) {
                         Card cardToPlay = botService.checkCardsForPlayable(player, player.getDebtCount() == 2 ? CARD_TYPE.DRAW_TWO.toString() : CARD_TYPE.WILD_DRAW_FOUR.toString());
-                        System.out.println(cardToPlay);
                         if (cardToPlay == null) {
                             for (int i = 0; i < player.getDebtCount(); i++) {
                                 gameService.drawCard(false);
@@ -165,7 +149,7 @@ public class PlayerController implements Controller{
         };
 
         player.listeners().addPropertyChangeListener(Player.PROPERTY_CURRENT_GAME, currentPlayerListener);
-        player.listeners().addPropertyChangeListener(Player.PROPERTY_CARDS ,cardListener);
+        player.listeners().addPropertyChangeListener(Player.PROPERTY_CARDS, cardListener);
 
         return parent;
     }
@@ -181,6 +165,7 @@ public class PlayerController implements Controller{
     @Override
     public void destroy() {
         player.listeners().removePropertyChangeListener(Player.PROPERTY_CARDS, cardListener);
+        player.listeners().removePropertyChangeListener(Player.PROPERTY_CURRENT_GAME, currentPlayerListener);
     }
-    
+
 }

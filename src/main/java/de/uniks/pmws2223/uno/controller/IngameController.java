@@ -1,9 +1,5 @@
 package de.uniks.pmws2223.uno.controller;
 
-import java.beans.PropertyChangeListener;
-import java.io.IOException;
-import java.util.*;
-
 import de.uniks.pmws2223.uno.App;
 import de.uniks.pmws2223.uno.Main;
 import de.uniks.pmws2223.uno.model.Card;
@@ -15,25 +11,30 @@ import de.uniks.pmws2223.uno.service.GameService;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
-import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
-import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 
-import static de.uniks.pmws2223.uno.Constants.*;
+import java.beans.PropertyChangeListener;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
 
-public class IngameController implements Controller{
+import static de.uniks.pmws2223.uno.Constants.CARD_TYPE;
+import static de.uniks.pmws2223.uno.Constants.INGAME_TITLE;
+
+public class IngameController implements Controller {
 
     private final App app;
     private final Game game;
     private final BotService botService;
-    private AnimationService animationService;
+    private final AnimationService animationService;
     private final GameService gameService;
     private List<Card> deck;
     private final List<PlayerController> playerControllers = new ArrayList<>();
@@ -41,7 +42,7 @@ public class IngameController implements Controller{
     private PropertyChangeListener drawListener;
     private Pane wishColorParent;
 
-    public IngameController(App app, Game game, GameService gameService, AnimationService animationService){
+    public IngameController(App app, Game game, GameService gameService, AnimationService animationService) {
         this.app = app;
         this.game = game;
         this.gameService = gameService;
@@ -64,20 +65,19 @@ public class IngameController implements Controller{
     public Parent render() throws IOException {
         final Parent parent = FXMLLoader.load(Main.class.getResource("view/Ingame.fxml"));
         wishColorParent = (Pane) parent.lookup("#wishColorParent");
-        for(Node colorRec : wishColorParent.getChildren()){
+        for (Node colorRec : wishColorParent.getChildren()) {
             colorRec.setOnMouseClicked(this::wishColor);
         }
 
-        for(Player player : game.getPlayers()){
+        for (Player player : game.getPlayers()) {
             PlayerController playerController = new PlayerController(player, gameService, player.isIsBot() ? null : wishColorParent, botService, animationService);
             playerController.init();
             playerControllers.add(playerController);
 
-            if(player.isIsBot()){
+            if (player.isIsBot()) {
                 HBox root = (HBox) parent.lookup("#botBox");
                 root.getChildren().add(playerController.render());
-            }
-            else{
+            } else {
                 Pane root = (Pane) parent.lookup("#rootNode");
                 root.getChildren().add(playerController.render());
             }
@@ -94,20 +94,22 @@ public class IngameController implements Controller{
                     app.show(new GameOverController(app, game.getCurrentPlayer().getName()));
                 }
 
-                discardPile.getChildren().add(gameService.generateUICard((Card) evt.getNewValue(), false));
+                Pane newCard = gameService.generateUICard((Card) evt.getNewValue(), false);
+                discardPile.getChildren().add(newCard);
+                newCard.setTranslateY((float) -(discardPile.getChildren().size() - 1) / 4);
+
                 String type = game.getDiscardCards().get(game.getDiscardCards().size() - 1).getType();
                 if (CARD_TYPE.SKIP.toString().equals(type)) {
-                    game.setCurrentPlayer(game.getCurrentPlayer().getNextPlayer().getNextPlayer());
-                } else if (CARD_TYPE.REVERSE.toString().equals(type)) {
-                    if (game.getPlayers().size() > 2) {
-                        game.setClockwise(!game.isClockwise());
-                        gameService.passTurn();
+                    Player oldPlayer = game.getCurrentPlayer();
+                    game.setCurrentPlayer(null);
+                    if (game.isClockwise()) {
+                        game.setCurrentPlayer(oldPlayer.getNextPlayer().getNextPlayer());
                     } else {
-                        //TODO: bot skip doesnt work with 2 players (player + bot)
-                        Player player = game.getCurrentPlayer();
-                        game.setCurrentPlayer(null);
-                        game.setCurrentPlayer(player);
+                        game.setCurrentPlayer(oldPlayer.getPreviousPlayer().getPreviousPlayer());
                     }
+                } else if (CARD_TYPE.REVERSE.toString().equals(type)) {
+                    game.setClockwise(!game.isClockwise());
+                    gameService.passTurn();
                 } else if (CARD_TYPE.WILD_DRAW_FOUR.toString().equals(type)) {
                     if (game.isClockwise()) {
                         game.getCurrentPlayer().getNextPlayer().setDebtCount(4);
@@ -125,6 +127,11 @@ public class IngameController implements Controller{
                 } else {
                     gameService.passTurn();
                 }
+            } else if (evt.getOldValue() != null) {
+                discardPile.getChildren().removeIf(card -> card.getUserData().equals(evt.getOldValue()));
+                for (int count = 0; count < discardPile.getChildren().size(); count++) {
+                    discardPile.getChildren().get(discardPile.getChildren().size() - 1).setTranslateY(-((float) count++ / 4));
+                }
             }
         };
 
@@ -136,17 +143,18 @@ public class IngameController implements Controller{
                 drawPile.getChildren().add(imageView);
                 imageView.setOnMouseClicked(gameService::drawClickCard);
                 //drawPile.getChildren().get(drawPile.getChildren().size()-1).setTranslateX((count / 16));
-                drawPile.getChildren().get(drawPile.getChildren().size()-1).setTranslateY(-((float)game.getDrawCards().size() / 8));
+                drawPile.getChildren().get(drawPile.getChildren().size() - 1).setTranslateY(-((float) game.getDrawCards().size() / 8));
             } else if (event.getOldValue() != null) {
                 drawPile.getChildren().remove(game.getDrawCards().size());
                 if (game.getDrawCards().size() == 0) {
                     List<Card> newDeck = new ArrayList<>();//game.getDiscardCards().subList(0, game.getDiscardCards().size() - 2);
                     while (game.getDiscardCards().size() >= 2) {
+                        if (game.getDiscardCards().get(0).getType().equals(CARD_TYPE.WILD.toString()) || game.getDiscardCards().get(0).getType().equals(CARD_TYPE.WILD_DRAW_FOUR.toString())) {
+                            game.getDiscardCards().get(0).setColor(null);
+                        }
                         newDeck.add(game.getDiscardCards().get(0));
                         game.withoutDiscardCards(game.getDiscardCards().get(0));
                     }
-                    //System.out.println(newDeck);
-                    //game.withoutDiscardCards(newDeck);
                     Collections.shuffle(newDeck);
                     game.withDrawCards(newDeck);
                 }
@@ -159,21 +167,25 @@ public class IngameController implements Controller{
         return parent;
     }
 
-    private void wishColor(MouseEvent mouseEvent){
+    private void wishColor(MouseEvent mouseEvent) {
         Rectangle rec = (Rectangle) mouseEvent.getSource();
-        for(Node recs : wishColorParent.getChildren()){
+        for (Node recs : wishColorParent.getChildren()) {
             ((Rectangle) recs).setStrokeWidth(1);
         }
         rec.setStrokeWidth(4);
-        for(Player player : game.getPlayers()){
+        for (Player player : game.getPlayers()) {
             player.setWishedColor(rec.getFill().toString());
         }
-    } 
+    }
 
     @Override
     public void destroy() {
         game.listeners().removePropertyChangeListener(Game.PROPERTY_DISCARD_CARDS, discardListener);
         game.listeners().removePropertyChangeListener(Game.PROPERTY_DRAW_CARDS, drawListener);
+
+        for (PlayerController playerController : playerControllers) {
+            playerController.destroy();
+        }
     }
-    
+
 }

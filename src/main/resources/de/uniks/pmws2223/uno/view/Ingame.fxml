@@ -14,10 +14,10 @@
             <Image url="@../image/UNO_1920x1080.png" />
          </image>
       </ImageView>
-      <StackPane id="stackDiscardPile" fx:id="stackDiscardPile" layoutX="359.0" layoutY="226.0" prefHeight="89.0" prefWidth="59.0" scaleX="1.5" scaleY="1.5" style="-fx-background-color: #00000000;" />
-      <StackPane id="stackDrawPile" fx:id="stackDrawPile" layoutX="600.0" layoutY="226.0" prefHeight="89.0" prefWidth="60.0" scaleX="1.5" scaleY="1.5" style="-fx-background-color: #00000000;" />
+      <StackPane id="stackDiscardPile" fx:id="stackDiscardPile" layoutX="359.0" layoutY="245.0" prefHeight="89.0" prefWidth="59.0" scaleX="1.5" scaleY="1.5" style="-fx-background-color: #00000000;" />
+      <StackPane id="stackDrawPile" fx:id="stackDrawPile" layoutX="600.0" layoutY="245.0" prefHeight="89.0" prefWidth="60.0" scaleX="1.5" scaleY="1.5" style="-fx-background-color: #00000000;" />
       <HBox id="botBox" fx:id="botBox" alignment="CENTER" layoutX="14.0" layoutY="14.0" prefHeight="134.0" prefWidth="994.0" style="-fx-background-color: #00000000;" />
-      <Pane fx:id="wishColorParent" layoutX="864.0" layoutY="406.0" mouseTransparent="true" opacity="0.2" prefHeight="170.0" prefWidth="154.0">
+      <Pane fx:id="wishColorParent" layoutX="864.0" layoutY="406.0" prefHeight="170.0" prefWidth="154.0">
          <children>
             <Rectangle fx:id="wishColorBlue" arcHeight="5.0" arcWidth="5.0" fill="BLUE" height="60.0" layoutX="8.0" layoutY="23.0" stroke="BLACK" strokeType="INSIDE" width="60.0" />
             <Rectangle fx:id="wishColorYellow" arcHeight="5.0" arcWidth="5.0" fill="YELLOW" height="60.0" layoutX="77.0" layoutY="24.0" stroke="BLACK" strokeType="INSIDE" width="60.0" />

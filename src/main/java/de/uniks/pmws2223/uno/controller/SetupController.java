@@ -1,25 +1,23 @@
 package de.uniks.pmws2223.uno.controller;
 
-import java.io.IOException;
-
 import de.uniks.pmws2223.uno.App;
 import de.uniks.pmws2223.uno.Main;
-import de.uniks.pmws2223.uno.model.Game;
 import de.uniks.pmws2223.uno.service.AnimationService;
 import de.uniks.pmws2223.uno.service.GameService;
-
-import static de.uniks.pmws2223.uno.Constants.*;
-
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
 
-public class SetupController implements Controller{
+import java.io.IOException;
+
+import static de.uniks.pmws2223.uno.Constants.SETUP_TITLE;
+
+public class SetupController implements Controller {
     private final App app;
 
-    public SetupController(App app){
+    public SetupController(App app) {
         this.app = app;
     }
 
@@ -29,7 +27,7 @@ public class SetupController implements Controller{
     }
 
     @Override
-    public void init() {  
+    public void init() {
     }
 
     @Override
@@ -49,7 +47,7 @@ public class SetupController implements Controller{
     }
 
     @Override
-    public void destroy() { 
+    public void destroy() {
     }
-    
+
 }
